@@ -1,0 +1,491 @@
+---
+author: Dbin
+startDate: 2022-11-13
+endDate: null
+---
+
+[TOC]
+
+## 工程时间4 课题一 学习记录(前言)
+
+1. 本记录使用Ubuntu20.04 虚拟机,记录中💖比*重要。
+
+2. 一些资料:
+   1. [Docker简介](https://www.jianshu.com/p/631605b266f8)
+   2. [什么是docker 容器编排)](https://www.west.cn/docs/61366.html)
+   3. [Swarm 集群管理 | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-swarm.html)
+   4. [Docker Compose | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-compose.html)
+
+3. 工具或资源推荐
+
+   1. 虚拟机工具Vmware
+
+   2. 阿里云镜像网站：[阿里巴巴开源镜像站-OPSX镜像站-阿里云开发者社区 (aliyun.com)](https://developer.aliyun.com/mirror/)
+
+   3. ssh工具(任选其一):
+
+      1. [MobaXterm Xserver with SSH](https://mobaxterm.mobatek.net/download.html)(<font color='blue'>推荐</font>)
+      2. [Birvise SSH Client](https://www.bitvise.com/) (<font color='grey'>需要科学上网</font>)
+      3. [Micorsoft Store 终端(Windows Terminal)](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=zh-cn&gl=cn) (这里默认使用的是powershell)
+
+      如果用普通终端命令链接linux主机的话,这里有命令:
+
+       1. 密码链接:
+
+          ```shell
+          ssh  root@114.132.58.142  -p 22
+          ```
+
+          其中root是用户名,@后面是主机ip, -p后面是端口,之后输入密码即可远程登录,前提是主机有ssh服务.
+
+          [ linux安装ssh和开启 ssh服务](https://blog.csdn.net/java_dotar_01/article/details/76942563)
+
+       2. 使用私钥链接
+
+          ```shell
+          ssh  root@114.132.58.142  -p 22 -i "这里是私钥路径,默认为C:\Users\user\.ssh\id_rsa" 
+          ```
+
+          -i指定密钥,若无则默认C:\Users\user\.ssh\id_rsa(C为系统盘);
+   
+   4. 踩坑提示
+   
+      1. 如果你和我一样采用Ubuntu20.04(我提供的虚拟机克隆已经修复了该问题,但是阿里云的镜像(指的是ubuntu20.4可能会出现该问题)),那么请运行`df -h`命令,查看还可以使用的磁盘空间是多少
+   
+         如果发现磁盘空间大小与分配的虚拟机空间大小不一致,可能是Ubuntu Server的时候采用了LVM
+   
+         请参考[磁盘满了问题解决](https://blog.csdn.net/Fish_Sheep/article/details/103325378)解决问题,趁磁盘空间足够的时候解决,别问我为什么。
+         
+         主要命令是这两条(请不要直接运行,具体操作看链接)
+         
+         ```shell
+         lvextend -L 18G /dev/mapper/ubuntu--vg-ubuntu--lv #将容量扩容到18G
+         resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv # 确认
+         ```
+         
+         
+
+## 0.安装虚拟机
+
+略......
+
+<font color='blue'>tips</font> 强烈建议在安装时安装openSSH
+
+## 1.安装docker💖
+
+参考资料[Ubuntu Docker 安装 | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/ubuntu-docker-install.html#:~:text=Ubuntu Docker 安装 1 使用官方安装脚本自动安装 安装命令如下： curl -fsSL,Docker Engine-Community 的边缘版本和测试版本。 脚本的源代码在 docker-install 仓库中。 不建议在生产环境中使用这些脚本，在使用它们之前，您应该了解潜在的风险： )
+
+在linux主机运行命令：
+
+```shell
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+```
+
+使用命令`docker info`或者`dockers version`查看当前docker信息
+
+出现类似下列信息则说明安装成功
+
+```shell
+Client:
+ Context:    default
+ Debug Mode: false
+ Plugins:
+  app: Docker App (Docker Inc., v0.9.1-beta3)
+  buildx: Docker Buildx (Docker Inc., v0.9.1-docker)
+  compose: Docker Compose (Docker Inc., v2.12.2)
+  scan: Docker Scan (Docker Inc., v0.21.0)
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 20.10.21
+ Storage Driver: overlay2
+  Backing Filesystem: extfs
+  Supports d_type: true
+  Native Overlay Diff: true
+  userxattr: false
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 1
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 io.containerd.runtime.v1.linux runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 1c90a442489720eec95342e1789ee8a5e1b9536f
+ runc version: v1.1.4-0-g5fd4c4d
+ init version: de40ad0
+ Security Options:
+  apparmor
+  seccomp
+   Profile: default
+ Kernel Version: 5.4.0-131-generic
+ Operating System: Ubuntu 20.04 LTS
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 2
+ Total Memory: 2.825GiB
+ Name: ubuntu
+ ID: 2YIJ:5LAR:K425:QFYS:5VH2:UV6U:RMEY:MT7Y:6WWZ:5M26:GD7E:RRNV
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ Registry: https://index.docker.io/v1/
+ Labels:
+ Experimental: false
+ Insecure Registries:
+  127.0.0.0/8
+ Live Restore Enabled: false
+```
+
+若出现以下Error信息，说明当前存在权限问题：
+
+```shell
+Client:
+ Context:    default
+ Debug Mode: false
+ Plugins:
+  app: Docker App (Docker Inc., v0.9.1-beta3)
+  buildx: Docker Buildx (Docker Inc., v0.9.1-docker)
+  compose: Docker Compose (Docker Inc., v2.12.2)
+  scan: Docker Scan (Docker Inc., v0.21.0)
+
+Server:
+ERROR: Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/info": dial unix /var/run/docker.sock: connect: permission denied
+errors pretty printing info
+```
+
+执行下面三步:
+
+1. ```shell
+   su #切换用户到超管
+   ```
+
+2. ```shell
+   $ sudo gpasswd -a username docker   #将普通用户username加入到docker组,注意,username为当前用户名
+   ```
+
+3. ```shell
+   $ newgrp docker  #更新docker组
+   ```
+
+后再运行`docker info` 即正常运行。
+
+## <del>2.更换镜像源*</del>
+
+tips:此阶段只为了下载镜像时更快,更换docker镜像源为阿里云镜像源,<font color='blue'>需要阿里账号</font>。
+
+- 登录到[容器镜像服务 (aliyun.com)](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
+- 再镜像工具中的镜像加速器中申请镜像链接。
+- 根据阿里云的操作文档 `2.配置镜像加速器` 配置镜像源
+
+## 3.使用portainer*
+
+参考资料:[Docker 管理工具 Portainer - 腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/2067415)
+
+### 1.安装运行portainer
+
+1. 执行命令,查看相关镜像
+
+   ```shell
+   docker search portainer
+   ```
+
+2. 拉取portainer(如果更换了阿里云的镜像源的话,下载应该比较快)
+
+   ```shell
+   docker pull portainer/portainer-ce
+   ```
+
+3. 运行命令
+
+   ```shell
+   docker run -d -p 9000:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock --name prtainer-test portainer/portainer-ce
+   ```
+
+   本命令运行一个docker容器,并该容器的9000端口与linux主机的9000端口产生映射,访问linux主机端口即访问到docker容器的对应的端口.
+
+   比如当前linux主机是虚拟机,容器则可以理解为虚拟机中运行的虚拟机,将虚拟机运行的虚拟机的一个端口映射到虚拟机的一个端口,可以通过访问虚拟机的ip+port访问该容器运行度服务。
+
+### 2.使用portainer
+
+#### 1.准备工作:
+
+查看虚拟机防火墙是否开放了对应端口等
+
+centOS相关命令:
+
+```shell
+systemctl status firewalld.service #防火墙状态
+firewall-cmd --list-all #查看防火墙开放端口
+firewall-cmd --permanent --add-port=3306/tcp #开启3306端口
+firewall-cmd --reload #重启
+```
+
+Ubuntu相关命令:
+
+```shell
+sudo ufw status #查看防火墙状态
+sudo ufw enable #开启防火墙
+sudo ufw disable #关闭防火墙
+sudo ufw version #查看防火前版本
+sudo ufw default allow #默认允许外部访问本机
+sudo ufw default deny #拒绝外部访问本机
+sudo ufw allow 53 #允许外部访问53端口
+sudo ufw deny 53 #拒绝外部访问53端口
+sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
+```
+
+一般先查看防火前状态,如果是关闭的就不管了(如果是具有公网ip的linux服务器,请开启,否则会暴露在危险之中)
+
+如果防火墙开启状态,请打开对应需要访问的端口。
+
+<font color='blue'>tips</font>:如果你的linux主机拥有图形界面,可直接在当前主机中访问,不用考虑防火墙问题,但是在做容器编排时仍需要关心防火墙问题。
+
+#### 2.访问portainer
+
+1. 查看linux虚拟主机ip
+
+   ```shell
+   ip addr
+   ```
+
+   可以看到几张网卡(包含虚拟网卡的ip地址),选择你安装系统时设置的对应网卡的ip来进行访问,我这里时`ens33`,IP是`192.168.231.135`
+
+2. 直接真机访问查看的ip(浏览器访问)
+
+   可以看到这个页面
+
+   ![image-20221113114906867](./Docker统一编排集群化.assets\image-20221113114906867.png)
+
+#### 3.配置portainer
+
+首次登录需要设置admin的密码,建议设置12345678,方便,设置复杂密码请牢记。
+
+其中`Allow collection of anonymous statistics. You can find more information about this in our privacy policy).` 的意思是 `允许收集匿名统计信息。您可以在我们的[隐私政策](https://www.portainer.io/documentation/in-app-analytics-and-privacy-policy/)中找到有关此内容的更多信息。`可以取消勾选
+
+我的版本是自动登录。登录后可以就看到本地运行的环境了
+
+![image-20221113115608806](./Docker统一编排集群化.assets/image-20221113115608806.png)
+
+若无可以点击Environment链接到docker环境。注意链接本地环境url为`/var/run/docker.sock`，远程环境则为对应ip+port.
+
+<font color='blue'>Tips:当完成了以上内容,建议使用VMware的快照功能保留当前进度.</font>
+
+## 4.Docker Swarm 的部署和使用💖
+
+### 1.准备工作
+
+1. 将刚才准备好的虚拟机(我称之为`manager`机,对应考核标准的`master`机)关机,
+
+2. manager机克隆一份，作为工作节点(我称之为`node`机,对应考核标准上的`node`机)。
+
+3. <font color='red'>***注意***</font>:之后的操作需要一定要分清楚是在那个主机上运行命令。
+
+4. 打开manager机,`ip addr` 命令查看ip(我的是`192.168.231.135` )
+
+5. 打开`node`机,使用`ip addr` 命令查看当前ip,可能当前虚拟机的ip与`manager`的ip是一样的可以参照[ VMware虚拟机克隆ubuntu20.04系统IP相同](https://blog.csdn.net/anlunson/article/details/124942722)修改。
+
+6. 建议修改新可浓虚拟机的hostname方便区分
+
+   ```shell
+   sudo vim /etc/hostname
+   ```
+
+   
+
+### 2.创建swarm集群管理节点
+
+在`manager`主机上使用命令：
+
+```shell
+docker swarm init --advertise-addr 192.168.231.135 #此处ip为manager主机ip
+```
+
+会得到一个这样的输出,证明初始化成功,copy保存该输出,之后有用。
+
+```shell
+docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh5217e59-98yiya06arxn5pkra3h1pomnp 192.168.231.135:2377
+```
+
+### 3.创建swarm集群工作节点
+
+1. 进入`node`机,运行以下命令:
+
+   ```shell
+   docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh5217e59-98yiya06arxn5pkra3h1pomnp 192.168.231.135:2377 #和上一步保存的一样。
+   ```
+
+   看到输出`This node joined a swarm as a worker.`则说明成功了。
+
+   若无法成功建议检查是否被防火墙拦截.
+
+2. 进入`manager`机,运行`docker info`命令。
+
+   ![image-20221113142622722](./Docker统一编排集群化.assets/image-20221113142622722-1668320784979-1.png)
+
+   可以看到如图信息,manager指的是管理节点1个,Nodes指的是工作节点2个,其中一个是我们新加入的节点,另外一个是管理节点。
+
+3. 查看节点信息
+
+   ```shell
+   docker node ls
+   ```
+
+   我这里已经运行了两个节点.
+
+   ![image-20221113172636370](./Docker统一编排集群化.assets/image-20221113172636370.png)
+
+<font color='red'>***注意***</font>：跟集群管理有关的任何操作，都是在管理节点上操作的。
+
+### 4.部署服务到集群中
+
+此处使用一个helloworld服务随机指派给一个工作节点,在manager端运行以下命令
+
+1. 首先拉取一个redis 镜像(如果docker已经换源了的话,拉取速度会比较快)：
+
+   ```shell
+   docker pull redis #默认latest版本，redis是一个非常6的高速缓存工具,常用于web后端,游戏等开发。
+   ```
+
+2. 运行以下命令查看是否拉取成功
+
+   ```shell
+   docker images 
+   ```
+
+   如果拉去失败可能是镜像源原因,或者空间不足,空间不足请参照[解决/var/lib/docker空间不足问题 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/266570357)解决,也可能是Ubuntu Server的时候采用了LVM,参考[(磁盘满了问题解决](https://blog.csdn.net/Fish_Sheep/article/details/103325378)解决
+
+3. 随机指派一个节点运行redis
+
+   `--replicas 1` 指的是分配任务到一个节点, 之后可以扩展
+
+   `-name redis redis` 第一个redis指的是名字是redis,第二个指的是redis容器名
+
+   ```shell
+   docker service create --replicas 1 --name redis redis
+   ```
+
+4. 查看服务部署情况
+
+   ```shell
+   docker service ps redis
+   ```
+
+   
+
+   ![image-20221113171820684](./Docker统一编排集群化.assets/image-20221113171820684.png)
+
+   可以看到这个redis是在ubuntu上,也就是本节点上.
+
+   运行以下命令可以查看到部署的具体信息。
+
+   ```shell
+   docker service inspect --pretty redis
+   ```
+
+5. 扩展服务到两个节点(扩展到新节点需要下载镜像)
+
+   ```shell
+   docker service scale redis=2
+   ```
+
+   然后查看运行信息,可以发现redis已经运行在两个节点中。
+
+   ![image-20221113172254900](./Docker统一编排集群化.assets/image-20221113172254900.png)
+
+6. 以下命令查询docker集群的所有服务
+
+   ```shell
+   docker service ls
+   ```
+
+### 5.删除服务
+
+```shell
+docker service rm redis
+```
+
+### 6.停止节点接收新任务
+
+1. 使ubuntu停止接受新任务:
+
+    ```shell
+    docker node update --availability drain ubuntu
+    ```
+
+    ![image-20221113173148835](./Docker统一编排集群化.assets/image-20221113173148835.png)
+
+    ubuntu将进入Drain模式,此时部署redis,redis必定会部署到ubuntu2.
+
+    即使通过`docker service scale redis=2`命令扩展也是扩展到ubuntu2.
+
+2. 是Ubuntu重新接受任务
+
+    ```shell
+    docker node update --availability active ubuntu
+    ```
+
+    ![image-20221113173711258](./Docker统一编排集群化.assets/image-20221113173711258-1668332232390-1.png)
+
+### 7.others
+
+可以通过之前安装的portainer管理服务。
+
+![image-20221113174325186](./Docker统一编排集群化.assets/image-20221113174325186.png)
+
+![image-20221113174331899](./Docker统一编排集群化.assets/image-20221113174331899.png) 
+
+## 5.Docker Compose
+
+资料:
+
+​	[Docker Compose | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-compose.html)或许你需要先学习yaml文件配置,对于前后端选手应该没啥问题。
+
+资源：
+
+​	[compose github 地址](https://github.com/docker/compose) 访问慢,当然也可以使用科学加速。
+
+​	[GitCode 镜像地址](https://gitcode.net/mirrors/docker/compose) 访问更快,不过pull可能需要准备ssh密钥。
+
+### 下载Compose
+
+1. 下载版本v.2.12.2
+
+    ```shell
+    sudo curl -L "https://objects.githubusercontent.com/github-production-release-asset-2e65be/15045751/986b903d-8918-497f-afe5-dfb67249ad11?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221113%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221113T110811Z&X-Amz-Expires=300&X-Amz-Signature=2fabf821bec83e57de18a47f7fb897f69731d2bddf23ae59d579833c47497d22&X-Amz-SignedHeaders=host&actor_id=76925338&key_id=0&repo_id=15045751&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-linux-x86_64&response-content-type=application%2Foctet-stream" -o /usr/local/bin/docker-compose
+    ```
+
+    下载到`/usr/local/bin/docker-compose`
+
+    链接失效到github自行下载[Releases · docker/compose (github.com)](https://github.com/docker/compose/releases)
+
+    我准备的下载[链接](https://dbin.shop/file/docker-compose)(2023年将失效)
+
+2. 添加运行权限
+
+    ```shell
+    sudo chmod 755 /usr/local/bin/docker-compose
+    ```
+
+3. 创建软连接
+
+    ```shell
+    sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    ```
+
+4. 运行`docker-compose version`查看是否下载正确
+
+5. 创建文件夹存放文件,我这里是`/home/dbin/compose`
+
+    ```shell
+    mkdir /home/dbin/compose
+    cd /home/dbin/compose/
+    ```
+
+已完结,不续🐕........................
