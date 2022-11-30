@@ -8,15 +8,17 @@ endDate: null
 
 ## 工程时间4 课题一 学习记录(前言)
 
-1. 本记录使用Ubuntu20.04 虚拟机,记录中💖比*重要。
+1. 这里是前言,你可以不必一个一个点进去观看,可以大概浏览,选择一些使用可以直接从[安装Docker](#install_docker)开始
 
-2. 一些资料:
+2. 本记录使用Ubuntu20.04 虚拟机,记录中💖比*重要。
+
+3. 一些资料:
    1. [Docker简介](https://www.jianshu.com/p/631605b266f8)
    2. [什么是docker 容器编排)](https://www.west.cn/docs/61366.html)
    3. [Swarm 集群管理 | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-swarm.html)
    4. [Docker Compose | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-compose.html)
 
-3. 工具或资源推荐
+4. 工具或资源推荐
 
    1. 
 
@@ -24,41 +26,41 @@ endDate: null
       - 🪜推荐1:[Watt Toolkit](https://steampp.net/) (提供访问github的服务)
       - 🪜推荐2:[clash](https://github.com/Dreamacro/clash/tags) (工具,并未提供服务,服务请自行寻找)
       - 
-   
+
    2. 阿里云镜像网站：[阿里巴巴开源镜像站-OPSX镜像站-阿里云开发者社区 (aliyun.com)](https://developer.aliyun.com/mirror/)
-   
+
    3. ssh工具(任选其一):
-   
+
       1. [MobaXterm Xserver with SSH](https://mobaxterm.mobatek.net/download.html)(<font color='blue'>推荐</font>)
       2. [Birvise SSH Client](https://www.bitvise.com/) (<font color='grey'>需要科学上网</font>)
       3. [Micorsoft Store 终端(Windows Terminal)](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=zh-cn&gl=cn) (这里默认使用的是powershell)
-   
+
       如果用普通终端命令链接linux主机的话,这里有命令:
-   
+
        1. 密码链接:
-   
+
           ```shell
           ssh  root@114.132.58.142  -p 22
           ```
-   
+
           其中root是用户名,@后面是主机ip, -p后面是端口,之后输入密码即可远程登录,前提是主机有ssh服务.
-   
+
           [ linux安装ssh和开启 ssh服务](https://blog.csdn.net/java_dotar_01/article/details/76942563)
-   
+
        2. 使用私钥链接
-   
+
           ```shell
           ssh  root@114.132.58.142  -p 22 -i "这里是私钥路径,默认为C:\Users\user\.ssh\id_rsa" 
           ```
-   
+
           -i指定密钥,若无则默认C:\Users\user\.ssh\id_rsa(C为系统盘);
-   
+
    4. 踩坑提示
-   
+
       1. 如果你和我一样采用Ubuntu20.04(我提供的虚拟机克隆已经修复了该问题,但是阿里云的镜像(指的是ubuntu20.4可能会出现该问题)),那么请运行`df -h`命令,查看还可以使用的磁盘空间是多少
-   
-         如果发现磁盘空间大小与分配的虚拟机空间大小不一致,可能是Ubuntu Server的时候采用了LVM
-   
+
+         如果发现磁盘空间大小与分配的虚拟机空间大小不一致,可能是安装Ubuntu Server的时候采用了LVM
+
          请参考[磁盘满了问题解决](https://blog.csdn.net/Fish_Sheep/article/details/103325378)解决问题,趁磁盘空间足够的时候解决,别问我为什么。
          
          主要命令是这两条(请不要直接运行,具体操作看链接)
@@ -134,7 +136,7 @@ network:
 
 执行`sudo netplan apply` 应用配置,再输入`ip addr`命令就可以查看到end37网卡 ip设置好了,另外一个虚拟机可以在克隆之后([准备工作](#DockerSwarmPrepare)之后)再设置,也是同样的操作,不过ip需要最后一位有所不同,我设置的是192.168.71.11,都配置好后,两台机器可以相互ping通就成功了(可能防火墙会导致ping失败)
 
-## 1.安装docker💖
+## <a id='install_docker'>1.安装docker💖</a>
 
 参考资料[Ubuntu Docker 安装 | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/ubuntu-docker-install.html#:~:text=Ubuntu Docker 安装 1 使用官方安装脚本自动安装 安装命令如下： curl -fsSL,Docker Engine-Community 的边缘版本和测试版本。 脚本的源代码在 docker-install 仓库中。 不建议在生产环境中使用这些脚本，在使用它们之前，您应该了解潜在的风险： )
 
@@ -249,6 +251,8 @@ tips:此阶段只为了下载镜像时更快,更换docker镜像源为阿里云�
 
 ## 3.使用portainer*
 
+这一大节可以暂时跳过,之后再装,影响不大.
+
 参考资料:[Docker 管理工具 Portainer - 腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/2067415)
 
 ### 1.安装运行portainer
@@ -273,7 +277,7 @@ tips:此阶段只为了下载镜像时更快,更换docker镜像源为阿里云�
 
    本命令运行一个docker容器,并该容器的9000端口与linux主机的9000端口产生映射,访问linux主机端口即访问到docker容器的对应的端口.
 
-   比如当前linux主机是虚拟机,容器则可以理解为虚拟机中运行的虚拟机,将虚拟机运行的虚拟机的一个端口映射到虚拟机的一个端口,可以通过访问虚拟机的ip+port访问该容器运行度服务。
+   比如当前linux主机是虚拟机,容器则可以理解为虚拟机中运行的虚拟机,将虚拟机运行的虚拟机的一个端口映射到虚拟机的一个端口,可以通过访问虚拟机的ip+port访问该容器运行的服务。
 
 ### 2.使用portainer
 
@@ -308,7 +312,7 @@ sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
 
 如果防火墙开启状态,请打开对应需要访问的端口。
 
-<font color='blue'>tips</font>:如果你的linux主机拥有图形界面,可直接在当前主机中访问,不用考虑防火墙问题,但是在做容器编排时仍需要关心防火墙问题。
+<font color='blue'>tips</font>:如果你的linux主机拥有图形界面,可直接在当前虚拟主机中访问,不用考虑防火墙问题,但是在做容器编排时仍需要关心防火墙问题。
 
 #### 2.访问portainer
 
@@ -336,11 +340,13 @@ sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
 
 ![image-20221113115608806](./Docker统一编排集群化.assets/image-20221113115608806.png)
 
-若无可以点击Environment链接到docker环境。注意链接本地环境url为`/var/run/docker.sock`，远程环境则为对应ip+port.
+若无可以点击Environment连接到docker环境。注意连接本地环境url为`/var/run/docker.sock`，若要连接一个已存在的远程环境则为对应ip+port，此处是本地环境。
 
 <font color='blue'>Tips:当完成了以上内容,建议使用VMware的快照功能保留当前进度.</font>
 
 ## 4.Docker Swarm 的部署和使用💖
+
+<font color='blue'>Tips:开始之前,建议使用VMware的快照功能保留当前进度.</font>
 
 ### <a id='DockerSwarmPrepare'>1.准备工作</a>
 
