@@ -57,7 +57,7 @@ endDate: null
 
    4. 踩坑提示
 
-      1. 如果你和我一样采用Ubuntu20.04(我提供的虚拟机克隆已经修复了该问题,但是阿里云的镜像(指的是ubuntu20.4可能会出现该问题)),那么请运行`df -h`命令,查看还可以使用的磁盘空间是多少
+      1. 如果你和我一样采用Ubuntu20.04(阿里云的镜像(指的是ubuntu20.4可能会出现该问题),那么请运行`df -h`命令,查看还可以使用的磁盘空间是多少
 
          如果发现磁盘空间大小与分配的虚拟机空间大小不一致,可能是安装Ubuntu Server的时候采用了LVM
 
@@ -86,15 +86,15 @@ endDate: null
 
 再VMware中添加一张网卡,如下图,由于种种原因,我的子网ip未192.168.71.0(之后两个虚拟机的ip都需要再这个网段,才可以相互连接)
 
-![image-20221130155230481](./Docker统一编排集群化.assets/image-20221130155230481.png)
+![image-20221130155230481](./assets/image-20221130155230481.png)
 
 为准备的虚拟机(两台虚拟机)添加网卡,其中NAT模式网卡主要用于和真机通信(真机远程控制)，自定义网卡用于虚拟机之间通信,且通过静态IP保证实验能够再迁移虚拟机后正常通信。
 
-![image-20221130155534010](./Docker统一编排集群化.assets/image-20221130155534010.png)
+![image-20221130155534010](./assets/image-20221130155534010.png)
 
 打开虚拟机后,运行`ip addr`可以看到两张网卡
 
-![image-20221130160346198](./Docker统一编排集群化.assets/image-20221130160346198.png)
+![image-20221130160346198](./assets/image-20221130160346198.png)
 
 我这里是一张ens33,一张ens37,其中ens33是NAT模式网卡,自动分配了ip,ens37是刚才添加的网卡(没有分配ip)。如果你同时开启两个虚拟机(其中一个由另一个克隆而来)遇到NAT模式网卡ip相同的问题,请参照[ VMware虚拟机克隆ubuntu20.04系统IP相同](https://blog.csdn.net/anlunson/article/details/124942722)修改,这里建议先修改一个虚拟机,之后克隆后修改一下就好。
 
@@ -328,7 +328,7 @@ sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
 
    可以看到这个页面
 
-   ![image-20221113114906867](./Docker统一编排集群化.assets\image-20221113114906867.png)
+   ![image-20221113114906867](./assets/image-20221113114906867.png)
 
 #### 3.配置portainer
 
@@ -338,7 +338,7 @@ sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
 
 我的版本是自动登录。登录后可以就看到本地运行的环境了
 
-![image-20221113115608806](./Docker统一编排集群化.assets/image-20221113115608806.png)
+![image-20221113115608806](./assets/image-20221113115608806.png)
 
 若无可以点击Environment连接到docker环境。注意连接本地环境url为`/var/run/docker.sock`，若要连接一个已存在的远程环境则为对应ip+port，此处是本地环境。
 
@@ -398,7 +398,7 @@ docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh52
 
 2. 进入`manager`机,运行`docker info`命令。
 
-   ![image-20221113142622722](./Docker统一编排集群化.assets/image-20221113142622722-1668320784979-1.png)
+   ![image-20221113142622722](./assets/image-20221113142622722-1668320784979-1.png)
 
    可以看到如图信息,manager指的是管理节点1个,Nodes指的是工作节点2个,其中一个是我们新加入的节点,另外一个是管理节点。
 
@@ -410,7 +410,7 @@ docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh52
 
    我这里已经运行了两个节点.
 
-   ![image-20221113172636370](./Docker统一编排集群化.assets/image-20221113172636370.png)
+   ![image-20221113172636370](./assets/image-20221113172636370.png)
 
 <font color='red'>***注意***</font>：跟集群管理有关的任何操作，都是在管理节点上操作的。
 
@@ -450,7 +450,7 @@ docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh52
 
    
 
-   ![image-20221113171820684](./Docker统一编排集群化.assets/image-20221113171820684.png)
+   ![image-20221113171820684](./assets/image-20221113171820684.png)
 
    可以看到这个redis是在ubuntu上,也就是本节点上.
 
@@ -468,7 +468,7 @@ docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh52
 
    然后查看运行信息,可以发现redis已经运行在两个节点中。
 
-   ![image-20221113172254900](./Docker统一编排集群化.assets/image-20221113172254900.png)
+   ![image-20221113172254900](./assets/image-20221113172254900.png)
 
 6. 以下命令查询docker集群的所有服务
 
@@ -490,7 +490,7 @@ docker service rm redis
     docker node update --availability drain ubuntu
     ```
 
-    ![image-20221113173148835](./Docker统一编排集群化.assets/image-20221113173148835.png)
+    ![image-20221113173148835](./assets/image-20221113173148835.png)
 
     ubuntu将进入Drain模式,此时部署redis,redis必定会部署到ubuntu2.
 
@@ -502,7 +502,7 @@ docker service rm redis
     docker node update --availability active ubuntu
     ```
 
-    ![image-20221113173711258](./Docker统一编排集群化.assets/image-20221113173711258-1668332232390-1.png)
+    ![image-20221113173711258](./assets/image-20221113173711258-1668332232390-1.png)
 
 ### 7.脱离集群
 
@@ -512,9 +512,9 @@ docker service rm redis
 
 可以通过之前安装的portainer管理服务。
 
-![image-20221113174325186](./Docker统一编排集群化.assets/image-20221113174325186.png)
+![image-20221113174325186](./assets/image-20221113174325186.png)
 
-![image-20221113174331899](./Docker统一编排集群化.assets/image-20221113174331899.png) 
+![image-20221113174331899](./assets/image-20221113174331899.png) 
 
 ## 5.Docker Compose
 
