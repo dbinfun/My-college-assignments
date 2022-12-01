@@ -12,6 +12,8 @@
 
 ### 开启与关闭
 
+CentOS
+
 ```shell
 systemctl start firewalld.service #开启
 systemctl unmask firewalld.service #开启失败可能需要先解锁服务
@@ -19,6 +21,20 @@ systemctl stop firewalld.service #关闭
 firewall-cmd --reload #重启
 systemctl disable firewalld.service #禁用防火墙
 service network restart #重启网卡
+```
+
+Ubuntu
+
+```shell
+sudo ufw status #查看防火墙状态
+sudo ufw enable #开启防火墙
+sudo ufw disable #关闭防火墙
+sudo ufw version #查看防火前版本
+sudo ufw default allow #默认允许外部访问本机
+sudo ufw default deny #拒绝外部访问本机
+sudo ufw allow 53 #允许外部访问53端口
+sudo ufw deny 53 #拒绝外部访问53端口
+sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
 ```
 
 ### 查看防火墙
