@@ -11,7 +11,11 @@ It was a repository for recording certain assignments from my university. Maybe 
 
 # 温馨提示
 
-1. 如果出现图片无法访问,可能是出现的DNS污染,可以更改DNS为腾讯云(`114.114.114.114`)或阿里云(`223.5.5.5`)的公共DNS,然后清除一下dns缓存(windows是`ipconfig /flushdns`)
+1. 如果出现图片无法访问,可能是出现的DNS污染,可以更改DNS为腾讯云(`114.114.114.114`)或阿里云(`223.5.5.5`)的公共DNS,然后清除一下DNS缓存(windows是`ipconfig /flushdns`)，不过最近(2022年12月)我发现阿里云的DNS和腾讯云的DNS无法解析raw.githubusercontent.com,所以你可以直接修改host文件(windows下host文件在`C:\Windows\System32\drivers\etc`下,使用管理员权限打开),在host文件中添加以下内容(其中IP可以是`185.199.108.133` `185.199.109.133` `185.199.110.133` `185.199.111.133` )：
+
+   ```
+   185.199.108.133	raw.githubusercontent.com
+   ```
 
 # 声明
 
