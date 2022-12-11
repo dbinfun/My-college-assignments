@@ -572,4 +572,123 @@ docker service rm redis
     mkdir /home/dbin/compose
     cd /home/dbin/compose/
     ```
+    
+    现在compose就准备好了，compose目录就是之要用到的工作目录，不同的部署任务应该新建不同的目录,之后的操作除特殊说明都是在该目录下进行的。
+
+### 使用Compose
+
+使用compose部署一个简单的后端程序
+
+1. 使用以下命令下载demo.jar，也可以直接访问链接下载demo.jar,如果该链接过期可以直接访问[这里](https://wwiq.lanzoub.com/i9LTq0ieafjc)下载，然后把文件复制到compose目录下。
+
+   ```shell
+   wget "http://f0.0sm.com/node0/2022/12/86395718DB6FF800-69565eafd6ca5174.jpg" -O demo.jar
+   chmod 755 demo.jar # 赋权命令
+   ```
+
+   下载下来的demo.jar 是一个spring项目,默认监听8888端口。
+
+   他的代码是这样的：
+
+   `DemoApplication.class`
+
+   ```java
+   package com.example.demo;
+   
+   import org.springframework.boot.SpringApplication;
+   import org.springframework.boot.autoconfigure.SpringBootApplication;
+   import org.springframework.web.bind.annotation.PathVariable;
+   import org.springframework.web.bind.annotation.RequestMapping;
+   import org.springframework.web.bind.annotation.RestController;
+   
+   @SpringBootApplication
+   @RestController
+   public class DemoApplication {
+   
+       public static void main(String[] args) {
+           SpringApplication.run(DemoApplication.class, args);
+       }
+       @RequestMapping("/{message}")
+       public String M(@PathVariable String message) {
+           return message;
+       }
+       @RequestMapping("/**")
+       public String M() {
+           return "hello,If you visit 'host:port/hello', you can see hello";
+       }
+   }
+   
+   ```
+
+   `application.properties`
+
+   ```properties
+   server.port = 8888
+   ```
+
+2. 使用vim(`vim Dockerfile`)新建Dockerfile输入以下内容
+
+   ```text
+   FROM java:8
+   VOLUME /tmp
+   ADD demo.jar /demo.jar
+   RUN bash -c 'touch /demo.jar'
+   EXPOSE 8888
+   ENTRYPOINT ["java","-jar","demo.jar"]
+   ```
+
+   `FROM`:指的是从java:8镜像开始构建容器
+
+   `ADD`:是将demo.jar 复制到容器的/demo.jar
+
+   `RUN bash`:创建容器时运行命令
+
+   `EXPOSE`:是通知 Docker 容器在运行时监听指定的网络端口
+
+   `ENTRYPOINT`: 是运行的命令
+
+   关于`CMD` `RUN` `ENTRYPOINT` 的区别可以查看[这里](https://www.jianshu.com/p/7d485b6346f7)
+
+3. `vim  docker-compose.yml` 创建 docker-compose.yml
+
+   输入以下类容
+
+   ```yaml
+   version: '2' # 表示该 Docker-Compose 文件使用的是 Version 2 file
+   services:
+     mytest:  # 指定服务名称为mytest
+       image: "java:8" #指定镜像为java8
+       build: .  # 指定 Dockerfile 所在路径，这里是当前路径
+       ports:    # 指定端口映射,注意，前面的是主机端口，后面是容器端口。
+         - "8889:8888"
+   ```
+
+4. 开始运行吧。
+
+   两条命令选择一调即可(需要下载镜像，所以要等一会)
+
+   ```shell
+   docker-compose up # 该命令会进入到容器中
+   docker-compose up -d # 该命令可以在后台运行
+   ```
+
+   我运行的是`docker-compose up`,就可以看到熟悉的spring项目启动日志啦，可以在倒数第四行发现他监听了8888端口，如果退出当前页面容器就会停止运行，如果使用第二条命令退出了就会继续运行
+
+   ![image-20221211180722761](./assets/image-20221211180722761.png)
+
+5. 体验一下
+
+   我的虚拟机NAT模式网卡的地址是`192.168.159.128` 所以访问`http://192.168.159.128:8889/`就能看见内容了，访问呢`http://192.168.159.128:8889/helloworld`就可以看到helloworld的输出。
+
+   到此，Compose的基本使用就结束了。
+
+   你可以使用Docker基本命令查看停止容器的运行。
+
+   ```shell
+   docker ps -a # 查看所有的容器
+   docker stop d567691cc14d # 停止id为d567691cc14d的容器
+   docker rm d567691cc14d # 删除id为d567691cc14d的容器
+   ```
+
+   
 
