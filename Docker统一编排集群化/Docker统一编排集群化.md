@@ -394,6 +394,14 @@ docker swarm init --advertise-addr 192.168.231.135 #此处ip为manager主机ip
 docker swarm join --token SWMTKN-1-1uhjzhask1qoa08svoywmfclz1gvvyzabkh67mw8znh5217e59-98yiya06arxn5pkra3h1pomnp 192.168.231.135:2377
 ```
 
+如果很久以后你忘了上面的内容，可以通过以下命令查看
+
+```shell
+docker swarm join-token worker
+```
+
+
+
 ### 3.创建swarm集群工作节点
 
 1. 进入`node`机,运行以下命令:
