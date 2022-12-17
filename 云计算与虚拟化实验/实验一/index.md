@@ -93,7 +93,7 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 最后下载Floodlighta所需的其他依赖环境
 
 ```shell
-apt-get install install build-essential python-de
+apt-get install build-essential python-de
 ```
 
 ## Fllodlight
