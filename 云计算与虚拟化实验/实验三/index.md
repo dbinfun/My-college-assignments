@@ -331,3 +331,4 @@ curl http://192.168.1.31:8080/wm/staticflowentrypusher/list/00:00:00:00:66:a2:42
 curlhttp://192.168.1.31:8080/wm/staticflowentrypusher/clear/00:00:00:00:66:a2:42:9b:6e:4a/json
 ```
 
+（如果你不立刻下一个实验，请保留号虚拟机的现有状态，后面要用)
