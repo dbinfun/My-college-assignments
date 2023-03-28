@@ -4,7 +4,7 @@
 
 1. 利用线性布局，实现以下效果
 
-   ![image-20230328175314692](/home/dbinfun/myTemp/My-college-assignments/移动应用开发实验/assets/index/image-20230328175314692.png)
+   ![image-20230328175314692](./assets/index/image-20230328175314692.png)
 
    2. 在MainActivity中实现该计算器程序的功能，能够进行简单的4则运算，如2*8=16,4.6-8=-3.4等。
 
