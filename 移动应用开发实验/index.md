@@ -294,3 +294,182 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### 3.运行结果
+
+![image-20230328182438744](./assets/index/image-20230328182438744.png)
+
+# 实验二
+
+<font color='blue'>提示：我是直接在实验一的基础上做的，运行时将`AndroidMainfest.xml`中的如下代码替换，就可以改变启动时运行的Activity了</font>
+
+```xml
+<activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+```
+
+替换为
+
+```xml
+<!--MainActivity2是我之后新建的类-->
+<activity android:name=".MainActivity2"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+```
+
+## 实验要求
+
+见实验指导书
+
+## 实验代码和过程
+
+### 1.准备
+
+准备了6张图片，放在了`drawable`目录下
+
+![image-20230328182719726](./assets/index/image-20230328182719726.png)
+
+### 2.布局文件
+
+layout目录下新建布局文件`activity_main2.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+
+        android:id="@+id/main2.list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    </ListView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### 3.“组件”
+
+在layout目录下新建`list_array.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/list_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="80dp"
+            android:maxWidth="80dp"
+            android:padding="10dp"/>
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:padding="10dp"/>
+    </LinearLayout>
+</LinearLayout>
+```
+
+### 4.`MainActivity2.java`
+
+```java
+package site.dbin.application1;
+
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity2 extends AppCompatActivity {
+    // 图片的信息
+    private String[] data = {
+            "Apple","Banana","Orange","Watermelon","Pear"
+    };
+    // 图片的id
+    private int[] header = {
+            R.drawable.img0,R.drawable.img1,R.drawable.img2,R.drawable.img3,
+            R.drawable.img4,//R.drawable.img5,R.drawable.img6
+    };
+    // AlerDialog
+    private AlertDialog alert = null;
+    private AlertDialog.Builder builder = null;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.activity_main2);
+//      实验指导书让写的，没什么用
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+//                MainActivity2.this,R.layout.list_array,data);
+        ListView listView = findViewById(R.id.main2_list);
+        // 添加元素点击的监听器
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            // 获取子元素的name,最终对应的就是前面定义的data变量的数据
+            TextView textView = view.findViewById(R.id.name);
+            alert = null;
+            builder = new AlertDialog.Builder(MainActivity2.this);
+            alert = builder
+                    .setTitle("提示：")
+                    .setMessage("你点击了"+textView.getText())
+                    .setPositiveButton("确定", (dialog, which) -> {})
+                    .create();
+            alert.show();
+        });
+        //listView.setAdapter(adapter);
+        // 存放数据的list
+        List<Map<String,Object>> list = new ArrayList<>();
+        for(int i=0;i<data.length;i++){
+            Map<String,Object> map = new HashMap<>();
+            map.put("header",header[i]);
+            map.put("data",data[i]);
+            list.add(map);
+        }
+        // 创建一个适配器，适配器的数据是list,布局是list_array.xml
+        // 子元素中数据是header对应header,name对应data.
+        SimpleAdapter simpleAdapter = new SimpleAdapter(
+                MainActivity2.this,
+                list,
+                R.layout.list_array,
+                new String[]{"header","data"},
+                new int[]{R.id.header,R.id.name}
+                );
+        listView.setAdapter(simpleAdapter);
+    }
+}
+```
+
+### 5.运行效果
+
+![image-20230328184133050](./assets/index/image-20230328184133050.png)
+
+![image-20230328184209684](./assets/index/image-20230328184209684.png)
