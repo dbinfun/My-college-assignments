@@ -12,6 +12,7 @@ It was a repository for recording certain assignments from my university. Maybe 
 5. [移动应用开发实验](./移动应用开发实验/index.md)
 6. [网络编程实验](./网络编程/index.md)
 7. [个人经验总结](./myexperience/index.md)
+8. [归档](./archive/index.md)
 
 # 温馨提示
 
