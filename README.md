@@ -15,7 +15,7 @@ It was a repository for recording certain assignments from my university. Maybe 
 
 # 温馨提示
 
-1. 不能访问图片请到[这里](https://www.bing.com/search?q=github+%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE&cvid=e460aabc0d6b45fd91776dee061037bc&aqs=edge..69i57j0l6j69i64.6209j0j1&FORM=ANAB01&PC=U531&mkt=zh-CN)查找合适您的方法
+1. 不能访问图片请到[这里](https://www.bing.com/search?q=github+%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE&mkt=zh-CN)查找合适您的方法
 
 # 声明
 
