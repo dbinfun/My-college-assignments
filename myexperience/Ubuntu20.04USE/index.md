@@ -93,6 +93,8 @@ Categories=Development;
 
    ```shell
    sudo dpkg -r wemeet
+   # 或者
+   sudo apt purge wemeet
    ```
 
 # 环境的配置
@@ -290,3 +292,51 @@ exec "${HERE}"/netease-cloud-music $@
 我下载安装后无法运行，于是我去网易云里面复制了一个so文件到`/opt/uTools/`目录下就可以了
 
 附件[libcrypto.so.1.1](./assets/libcrypto.so.1.1) 
+
+# 问题解决
+
+## 更新
+
+### 无法更新Ubuntu store
+
+参考自[这里](https://zhuanlan.zhihu.com/p/580897179)
+
+1. 更新snap store
+
+   ```shell
+   sudo snap refresh snap-store
+   ```
+
+2. 如果更新时显示他正在运行，则更具显示的pid强行停止他
+
+   ```shell
+   kill pid
+   ```
+
+3. 重新更新 snap store
+
+   ```shell
+   sudo snap refresh snap-store
+   ```
+
+   
+
+## 安装
+
+### 安装报错has install-snap change in progress
+
+参考自[这里](https://blog.csdn.net/u011870280/article/details/80213866)
+
+1. 运行下面命令查看安装状态
+
+   ```
+   snap changes
+   ```
+
+2. 找到自己要安装软件的ID终止他
+
+   ```shell
+   sudo snap abort ID
+   ```
+
+   
