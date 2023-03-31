@@ -713,3 +713,182 @@ int main(int argc, char *argv[])
 }
 ```
 
+# 实验五
+
+## `tcp_server.c`
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/time.h>
+#define PORT    11111
+#define BACKLOG 1
+#define MAXDATASIZE 1000
+const int id[]={1,1,1,1,1,1,1,1,1,1};
+/**
+ * 程序只考虑输入ascii码
+*/
+struct CLIENT
+{
+    int fd;
+    char* name;
+    struct sockaddr_in addr;
+    char* data;
+};
+void process_cli(CLIENT* client,char* buf,int len);
+int main(void)
+{
+    int id[]={2,0,2,0,1,2,1,0,7,1};
+    int listenfd_d, connectfd_d;// 首字母d结尾
+    struct sockaddr_in server_d;
+    struct CLIENT client_d[FD_SETSIZE];
+    socklen_t addrlen;
+    // 创建tcp/ipv4 面向tcp流的套接字
+    if((listenfd_d = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    {
+                perror("socket() error.\n");
+                exit(1);
+    }
+
+    int opt = SO_REUSEADDR;//打开或关闭地址复用功能
+
+    setsockopt(listenfd_d, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    bzero(&server_d, sizeof(server_d));//置0
+    server_d.sin_family = AF_INET;// ipv4
+    server_d.sin_port = htons(PORT); //设置端口,主机数转换为网络序
+    server_d.sin_addr.s_addr = htonl(INADDR_ANY); // ip地址，此处是通配
+    // 绑定到套接字体
+    if (bind(listenfd_d, (struct sockaddr *)&server_d, sizeof(struct sockaddr)) == -1)
+    {
+                perror("bind() error.\n");
+                exit(1);
+    }
+    // 监听套接字，监听队列长度1
+    if (listen(listenfd_d, BACKLOG) == -1) 
+    {
+        perror("listen() error.\n");
+        exit(1);
+    }
+    socklen_t sin_size = sizeof(struct sockaddr_in);
+    int maxfd = listenfd_d;
+    int maxi = -1;
+    for(int i=0;i<FD_SETSIZE;i++){
+        client_d[i].fd=-1;
+    }
+    fd_set set,allset;
+    FD_ZERO(&allset);
+    FD_SET(listenfd_d,&allset);
+    addrlen = sizeof(client_d);
+    int nready = -1;
+    while(1){
+        struct sockaddr_in addr;
+        set = allset;
+        // 获取准备好的连接
+        nready = select(maxfd+1,&set,nullptr,nullptr,nullptr);
+        if(FD_ISSET(listenfd_d,&set)){
+            // 接受连接
+            if((connectfd_d=accept(listenfd_d,(struct sockaddr*)&addr,&sin_size))==-1){
+                perror("accept() error\n");
+                continue;
+            }
+            bool is = true;
+            for(int i=0;i<FD_SETSIZE;i++){
+                // 初始化数据
+                if(client_d[i].fd<0){
+                    client_d[i].fd=connectfd_d;
+                    client_d[i].name=nullptr;
+                    client_d[i].addr=addr;
+                    client_d[i].data = new char[MAXDATASIZE];
+                    client_d[i].data[0]='\0';
+                    printf("You got a connection from %s.\n",inet_ntoa(client_d[i].addr.sin_addr));
+                    fflush(stdout);// 有时候没输出，清空一下输出缓冲区
+                    is = false;
+                    maxi = i>maxi?i:maxi;
+                    break;
+                }
+                maxi = i>maxi?i:maxi;
+            }
+            if(is)printf("too many clients\n");// 当连接过多，报错
+            FD_SET(connectfd_d,&allset);
+            if(connectfd_d>maxfd) maxfd = connectfd_d;
+            if(nready--<=0)continue;
+        }
+        int sockfd;
+        for(int i=0;i<=maxi;i++){
+            if((sockfd=client_d[i].fd)<0)continue;
+            if(FD_ISSET(sockfd,&set)){
+                int n;
+                // 分配缓存空间
+                char* buf = (char*)malloc(MAXDATASIZE);
+                if((n=recv(sockfd,buf,MAXDATASIZE,0))==0){
+                    // n==0,关闭连接
+                    close(sockfd);
+                    printf("Client(%s) closed connection User's data:%s\n",client_d[i].name,client_d[i].data);
+                    FD_CLR(sockfd,&allset);
+                    client_d[i].fd=-1;
+                    free(client_d[i].name);
+                    free(client_d[i].data);
+                }else{
+                    // 处理数据
+                    process_cli(&client_d[i],buf,n);
+                }
+                if(nready--<=0){
+                    break;
+                } 
+            }
+        }
+    }
+    close(listenfd_d);
+}
+void saveData(char* buff,int len,char* data){
+    int start = strlen(data);
+    // copy数据到data中
+    for(int i=0;i<len;i++){
+        data[start+i]=buff[i];
+    }
+}
+void process_cli(CLIENT* client,char* buf,int len){
+    buf[len]='\0';
+    // 第一次收到的数据是name,存入name就好，这样就不用释放buf
+    if(client->name==nullptr){
+        client->name = buf;
+        printf("Client's name is %s\n",buf);
+        return;
+    }
+    printf("Received client(%s)message:%s\n",client->name,buf);
+    saveData(buf,len,client->data);
+    // 计算分组是否不足
+    int m = 10-(len-1)%10;
+    m %= 10;
+    char rever[len+m];
+    strcpy(rever,buf);
+    // 补0
+    for(int j=0;j<m;j++){
+        rever[len-1+j]='0';
+    }
+    for (int i = 0,j=0; i < m+len-1; i++,j++)
+    {
+        rever[i] += id[j%10];// 直接可学号相加
+    }
+    rever[m+len-1] = '\0';
+    printf("收到信息:%s\n", buf);
+    
+    if (strcmp(buf, "quit") == 0)
+    {
+        return;
+    }
+    printf("加密后的信息:%s\n",rever);
+    send(client->fd, rever, len+m,0);
+    free(buf);// 释放空间
+}
+```
+
+## `tcp_client`
+
+见`tcp_process_client.c`
