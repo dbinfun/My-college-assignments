@@ -570,12 +570,24 @@ public class MainActivity2 extends AppCompatActivity {
             android:layout_height="wrap_content"
             android:text="记住用户名和密码"
             android:textSize="20dp"/>
-        <Button
-            android:id="@+id/main3.submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="登录"
-            android:textSize="30dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/main3.submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="登录"
+                android:layout_margin="10px"
+                android:textSize="30dp" />
+            <Button
+                android:id="@+id/main3.clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清空数据"
+                android:layout_margin="10px"
+                android:textSize="30dp" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -614,6 +626,13 @@ public class MainActivity3 extends AppCompatActivity {
             } else {
                 passwordT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
+        });
+        Button clear = findViewById(R.id.main3_clear);
+        clear.setOnClickListener(v -> {
+            editor.clear();
+            editor.commit();
+            usernameT.setText("");
+            passwordT.setText("");
         });
         String username = sp.getString("username",null);
         String password = sp.getString("password",null);
@@ -657,7 +676,7 @@ public class MainActivity3 extends AppCompatActivity {
 
 ## 运行效果(第一部分)
 
-![image-20230401130753245](./assets/index/image-20230401130753245.png)
+![image-20230401132407119](./assets/index/image-20230401132407119.png)
 
 ## 实验代码(第二部分)
 
