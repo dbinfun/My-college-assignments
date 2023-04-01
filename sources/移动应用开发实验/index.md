@@ -827,3 +827,619 @@ public class DownloadFile extends AppCompatActivity {
 ![image-20230401131157826](./assets/index/image-20230401131157826.png)
 
 ![image-20230401131244677](./assets/index/image-20230401131244677.png)
+
+# 实验四
+
+## 实验要求
+
+1）在项目中新建1个APP Module，Module中包含1个空的Activity，名称为MainActivity。
+
+2）把MainActivity的布局文件设计如下：
+
+![image-20230401160348286](./assets/index/image-20230401160348286.png)
+
+3）创建SQLiteOpenHelper的派生类DBHelper，并重写onCreate方法，使得程序第一次创建数据库后就可以创建表
+
+Users（_id（不是id）,username,usertel,useraddress,useremail）。
+
+4）按钮“打开数据库”点击处理的逻辑为：创建DBHelper的对象，并通过对象的getWritableDatabase()方法得到SQLiteDatabase对象。
+
+5）在ADB Shell环境中访问SQLite数据库（使用的命令：SQLite3），查看表Users是否已经创建。（程序执行了DBHelper的onCreate方法）
+
+6）按钮“下一记录”点击处理的逻辑为： 调用SQLiteDatabase对象的query方法生成Cursor对象，通过向后移动记录指针，将记录指针指向的记录数据在文本编辑框中显示。
+
+7）按钮“上一记录”点击处理的逻辑为： 调用SQLiteDatabase对象的query方法生成Cursor对象，通过向前移动记录指针，将记录指针指向的记录数据在文本编辑框中显示。
+
+8）按钮“添加”点击处理的逻辑为：将文本编辑框中用户输入的内容保存到SQLite数据库中,主要使用SQLiteDatabase对象的insert()方法。
+
+9）按钮“更新”点击处理的逻辑为：将文本编辑框中用户输入的内容更新到SQLite数据库中,主要使用SQLiteDatabase对象的update()方法，通过用户姓名进行更新（或通过主键_id）。
+
+10）按钮“删除”点击处理的逻辑为：使用SQLiteDatabase对象的delete()方法，通过用户姓名进行记录删除（或通过主键_id）。
+
+11）在ADB Shell环境中访问SQLite数据库，查看表Users中记录的变化。
+
+## 实验代码或步骤
+
+### `activity_main4.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_editor_absoluteY="48dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="我的通讯录"
+            android:textSize="20pt" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/main4.open.database"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2pt"
+                android:text="打开数据库"
+                android:textSize="10pt" />
+
+            <Button
+                android:id="@+id/main4.close.database"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2pt"
+                android:text="关闭数据库"
+                android:textSize="10pt" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"><!--垂直居中-->
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=" 浏览记录:"
+                android:textSize="10pt" />
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="5">
+
+                <Button
+                    android:id="@+id/main4.front"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10px"
+                    android:layout_weight="1"
+                    android:text="上一记录" />
+
+                <Button
+                    android:id="@+id/main4.next"
+                    android:layout_width="0px"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10px"
+                    android:layout_weight="1"
+                    android:text="下一记录" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=" 用户姓名:"
+                android:textSize="8pt" />
+            <EditText
+                android:id="@+id/main4.username"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="7" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=" 联系电话:"
+                android:textSize="8pt" />
+            <EditText
+                android:id="@+id/main4.phone"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:inputType="phone"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=" 家庭住址:"
+                android:textSize="8pt" />
+
+            <EditText
+                android:id="@+id/main4.address"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=" 电子邮箱:"
+                android:textSize="8pt" />
+            <EditText
+                android:id="@+id/main4.email"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:inputType="textEmailAddress"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/main4.add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:layout_weight="1"
+                android:text="添加"/>
+            <Button
+                android:id="@+id/main4.edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:layout_weight="1"
+                android:text="修改"/>
+            <Button
+                android:id="@+id/main4.delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5px"
+                android:layout_weight="1"
+                android:text="删除"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `DBHelper.java`
+
+```java
+package site.dbin.application1;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+class Info {
+    private Integer id;
+    private String username;
+
+    private String phone;
+    private String email;
+    private String address;
+
+    public Info(){}
+
+    public Info(Cursor cursor){
+        this.id = cursor.getInt(0);
+        this.username = cursor.getString(1);
+        this.phone = cursor.getString(2);
+        this.email = cursor.getString(3);
+        this.address = cursor.getString(4);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+}
+public class DBHelper extends SQLiteOpenHelper {
+    public static final String DATABASE_NAME = "my_database.db";
+    public static final int DATABASE_VERSION = 1;
+    public static final String TABLE_NAME = "my_table";
+    private static final String ID = "_id";
+    private static final String USERNAME = "username";
+    private static final String PHONE = "phone";
+    private static final String EMAIL = "email";
+    private static final String Address = "address";
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE_NAME + " (" +
+            ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            USERNAME + " TEXT, "+
+            PHONE + " TEXT, "+
+            EMAIL + " TEXT, "+
+            Address + " TEXT"+
+            ")";
+    public DBHelper(@Nullable Context context) {
+        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(CREATE_TABLE_SQL);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    }
+
+    public boolean insert(Info info){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USERNAME, info.getUsername());
+        contentValues.put(PHONE, info.getPhone());
+        contentValues.put(EMAIL, info.getEmail());
+        contentValues.put(Address, info.getAddress());
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        db.close();
+        return result > 0;
+    }
+
+    public int delete(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, ID + "=" + id, null);
+        db.close();
+        return result;
+    }
+
+    public int update(Info info){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USERNAME, info.getUsername());
+        contentValues.put(PHONE, info.getPhone());
+        contentValues.put(EMAIL, info.getEmail());
+        contentValues.put(Address, info.getAddress());
+        int result = db.update(TABLE_NAME, contentValues, ID + "=" + info.getId(), null);
+        db.close();
+        return result;
+    }
+
+    public Info select(int i){
+        SQLiteDatabase db = this.getReadableDatabase();
+        // 查询限制一条
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null,i-1+","+1);
+        Info info = new Info();
+        if(cursor.moveToFirst()){
+            info.setId(cursor.getInt(0));
+            info.setUsername(cursor.getString(1));
+            info.setPhone(cursor.getString(2));
+            info.setEmail(cursor.getString(3));
+            info.setAddress(cursor.getString(4));
+        }else{
+            return null;
+        }
+        cursor.close();
+        db.close();
+        return info;
+    }
+}
+```
+
+### `MainActivity4.java`
+
+```java
+package site.dbin.application1;
+
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity4 extends AppCompatActivity {
+    private DBHelper dbHelper;
+    private int which=0;// 记录当前用户是第几行
+    private Info info=null;// 用户信息
+    EditText username=null;
+    EditText phone=null;
+    EditText email=null;
+    EditText address=null;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main4);
+        username = findViewById(R.id.main4_username);
+        phone = findViewById(R.id.main4_phone);
+        email = findViewById(R.id.main4_email);
+        address = findViewById(R.id.main4_address);
+        // 这里可以采用遍历数组的方式获取队像
+        Button add = findViewById(R.id.main4_add);
+        Button del = findViewById(R.id.main4_delete);
+        Button edit = findViewById(R.id.main4_edit);
+        Button front = findViewById(R.id.main4_front);
+        Button next =findViewById(R.id.main4_next);
+        Button open = findViewById(R.id.main4_open_database);
+        Button close = findViewById(R.id.main4_close_database);
+        // 禁用按钮
+        disallowClick(add,del,edit,front,next,close);
+        open.setOnClickListener((v)->{
+            if(dbHelper==null){
+                dbHelper = new DBHelper(this);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                // 启用和禁用按钮
+                allowdClick(add,del,edit,front,next,close);
+                disallowClick(open);
+            }else{
+                toast("数据库已经打开了");
+            }
+        });
+        close.setOnClickListener((v)->{
+            if(dbHelper!=null){
+                dbHelper.close();
+                dbHelper = null;
+                // 启用和禁用按钮
+                allowdClick(open);
+                disallowClick(add,del,edit,front,next,close);
+                // which=1;//可以切换到第一个
+                // 这里可以将数据清空,略......
+            }else{
+                toast("数据库已经关闭了");
+            }
+        });
+        // 下一个
+        next.setOnClickListener((v)->{
+            if(!isOpen())return;
+            which++;
+            Info t = dbHelper.select(which);
+            if(t==null){
+                which=1;
+                t=dbHelper.select(which);
+                toast("已经是最后一个了，尝试切换到第一个");
+            }
+            bindData(t);
+        });
+        // 前一个
+        front.setOnClickListener((v)->{
+            if(!isOpen())return;
+            which--;
+            if(which==0){
+                toast("已经是第一个了，尝试切换到第一个");
+                which=1;
+            }
+            Info t=dbHelper.select(which);
+            bindData(t);
+        });
+        // 添加
+        add.setOnClickListener((v)->{
+            if(!isOpen())return;
+            // 获取编辑器中的数据
+            Info t = bindData(null,username.getText().toString(),phone.getText().toString(),email.getText().toString(),address.getText().toString());
+            if(t==null){
+                toast("数据填写不完整或者不可见");
+                return;
+            }
+            boolean is = dbHelper.insert(t);
+            if(is)toast("添加成功");
+            else toast("添加失败");
+        });
+        // 删除
+        del.setOnClickListener((v)->{
+            if(!isOpen())return;
+            dbHelper.delete(info.getId());// 删除
+            Info t = dbHelper.select(which);// which不变重新查询
+            // 没有
+            if(t==null){
+                which=1;
+                t=dbHelper.select(which);
+                toast("删除了最后一个，尝试切换到第一个");
+            }
+            bindData(t);
+            toast("删除成功");
+        });
+        // 编辑
+        edit.setOnClickListener(view -> {
+            if(!isOpen())return;
+            // 修改时witch不变
+            info = bindData(info.getId(),username.getText().toString(),phone.getText().toString(),email.getText().toString(),address.getText().toString());
+            if(info==null){
+                toast("数据填写不完整或者不可见");
+                return;
+            }
+            int result = dbHelper.update(info);
+            if(result==1)toast("修改成功");
+            else toast("修改失败");
+        });
+
+    }
+
+    /**
+     * 统一的Toast
+     * @param message 信息
+     */
+    private void toast(String message){
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 绑定数据到视图
+     * @param info 数据
+     */
+    public void bindData(Info info){
+        if(info==null){
+            toast("没有数据");
+            return;
+        }else{
+            toast("查询到数据");
+        }
+        this.info = info;
+        username.setText(info.getUsername());
+        phone.setText(info.getPhone());
+        email.setText(info.getEmail());
+        address.setText(info.getAddress());
+    }
+
+    /**
+     * 字符串判空
+     * @param s s
+     * @return
+     */
+    private boolean isBlank(String s){
+        if(s==null) return true;
+        for(int i=0;i<s.length();i++){
+            if(!Character.isWhitespace(s.charAt(i))){
+                return false;
+            }
+        }return true;
+    }
+    /**
+     * 构建可以存入数据库的对象
+     */
+    public Info bindData(Integer id,String username,String phone,String email,String address){
+        if(isBlank(username)||isBlank(phone)||isBlank(email)||isBlank(address)){
+            return null;
+        }
+        Info t = new Info();
+        t.setId(id);
+        t.setUsername(username);
+        t.setPhone(phone);
+        t.setEmail(email);
+        t.setAddress(address);
+        return t;
+    }
+
+    /**
+     * 允许点击
+     * @param buttons 按钮列表
+     */
+    private void allowdClick(Button ...buttons){
+        for(Button b : buttons){
+            b.setEnabled(true);
+        }
+    }
+
+    /**
+     * 禁止点击
+     * @param buttons 按钮列表
+     */
+    private void disallowClick(Button...buttons){
+        for(Button b : buttons){
+            b.setEnabled(false);
+        }
+    }
+
+    /**
+     * 数据库是否开启
+     * @return true/no
+     */
+    public boolean isOpen(){
+        if(this.dbHelper!=null){
+            return true;
+        }
+        toast("数据库未开启");
+        return false;
+    }
+}
+```
+
+## 运行效果
+
+![image-20230401160919515](./assets/index/image-20230401160919515.png)
+
+![image-20230401160939633](./assets/index/image-20230401160939633.png)
+
+## ADB命令查看数据库
+
+1. 找到SDK的安装位置，其platform-tools下有adb的可执行文件,打开终端，进入platform-tools.
+
+2. 打开AS的虚拟机
+
+3. 使用adb基本命令连接到虚拟机
+
+   有这样一些命令：
+
+   ```shell
+   adb devices #连接到虚拟机
+   adb shell #进入设备shell环境
+   run-as <package_name> #快速进入应用私有目录，比如我的包名是site.dbin 项目名是app，就运行run-as site.dbin.app
+   cd databases
+   ls #到这步就可以看到数据库文件了
+   sqlite3 my_database.db # 注意my_database.db是对应的数据库文件
+   # 之后将进入sql命令行
+   .tables #查看表
+   select * from my_table; #查询my_table表的数据
+   .exit #退出sql命令行
+   exit #退出应用程序私有目录
+   exit #退出adb
+   ```
+
+效果如下
+
+![image-20230401163638063](./assets/index/image-20230401163638063.png)
+
