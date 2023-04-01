@@ -1,3 +1,7 @@
+# 前言：
+
+我将实验全都写在一个工程内，所以启动类的名字有所区别，请注意到`AndroidManifest.xm`中修改正确的启动类。
+
 # 实验一
 
 ## 要求
@@ -473,3 +477,334 @@ public class MainActivity2 extends AppCompatActivity {
 ![image-20230328184133050](./assets/index/image-20230328184133050.png)
 
 ![image-20230328184209684](./assets/index/image-20230328184209684.png)
+
+# 实验三
+
+## 实验要求：
+
+设计如下布局
+
+![image-20230401125717543](./assets/index/image-20230401125717543.png)
+
+在MainActivity中通过SharedPreferences保存验证通过的用户名和密码。
+
+当用户在“记住用户名和密码”处打钩，则在下一次进入该界面时，自动读取SharedPreferences中的内容，并填充到指定的文本框中。
+
+在Module中新建一个Activity，取名为“DownloadFile”。
+
+设计DownloadFile的布局文件，主要包括两个文本框（et1和et2）和一个按钮（btn1）。
+
+在DownloadFile中编写相关的逻辑代码，点击按钮btn1后，通过HttpURLConnection实现将et1中指定网络地址的文件进行下载，并保存到本地，保存的文件名来自et2中的输入。
+
+下载完成后，使用Toast给出提示。
+
+通过Device File Explorer检查文件是否生成，能否正确打开。
+
+## 实验代码(第一部分)
+
+### `activity_main3.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity3">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户名:"
+            android:textSize="30dp"
+            android:width="50pt"/>
+        <EditText
+            android:id="@+id/main3.username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="30dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码:"
+            android:textSize="30dp"
+            android:width="50pt"/>
+        <EditText
+            android:id="@+id/main3.password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:inputType="textPassword"
+            android:textSize="30dp"
+            android:width="100pt"/>
+        <ToggleButton
+            android:id="@+id/main3.show"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="50pt"
+            android:textAllCaps="false"
+            android:textOn="hide"
+            android:textOff="show"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/main3.remember"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="记住用户名和密码"
+            android:textSize="20dp"/>
+        <Button
+            android:id="@+id/main3.submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="登录"
+            android:textSize="30dp" />
+    </LinearLayout>
+</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity3.java`
+
+```java
+package site.dbin.application1;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.text.InputType;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+public class MainActivity3 extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main3);
+        SharedPreferences sp = getSharedPreferences("info",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        EditText usernameT = findViewById(R.id.main3_username);
+        EditText passwordT = findViewById(R.id.main3_password);
+        ToggleButton show = findViewById(R.id.main3_show);// 显示密码的控件
+        show.setOnCheckedChangeListener((v,is)->{
+            if(is){
+                passwordT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            } else {
+                passwordT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+        });
+        String username = sp.getString("username",null);
+        String password = sp.getString("password",null);
+        if(username!=null){
+            usernameT.setText(username);
+        }
+        if(password!=null){
+            passwordT.setText(password);
+        }
+        Button submit = findViewById(R.id.main3_submit);
+        RadioButton remember = findViewById(R.id.main3_remember);
+        submit.setOnClickListener(v -> {
+            String u = usernameT.getText().toString();
+            String p = passwordT.getText().toString();
+            if(isBlank(u)||isBlank(p)){
+                Toast.makeText(MainActivity3.this,"用户名和密码不能为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(remember.isChecked()) {
+                editor.putString("username", u);
+                editor.putString("password", p);
+                editor.commit();// 提交数据
+            }
+            Toast.makeText(MainActivity3.this,"成功", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private static boolean isBlank(String s){
+        if(s==null)return true;
+        boolean is = true;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)!=' '){
+                is = false;
+                break;
+            }
+        }
+        return is;
+    }
+}
+```
+
+## 运行效果(第一部分)
+
+![image-20230401130753245](./assets/index/image-20230401130753245.png)
+
+## 实验代码(第二部分)
+
+### 修改AndroidManifest.xml
+
+在二级标签中添加下面类容，申请网络权限
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+### `activity_download_file.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DownloadFile">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入下载地址"/>
+        <EditText
+            android:id="@+id/et2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入文件名"/>
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下载"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `DownloadFile.java`
+
+```java
+package site.dbin.application1;
+
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.FileUtils;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class DownloadFile extends AppCompatActivity {
+    private EditText et1, et2;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_download_file);
+        et1 = findViewById(R.id.et1);
+        et2 = findViewById(R.id.et2);
+        Button btn1 = findViewById(R.id.btn1);
+        btn1.setOnClickListener((v)->{
+            String url = et1.getText().toString();
+            // 测试连接
+            if(isBlank(url))url = "https://raw.githubusercontent.com/dbinfun/My-college-assignments/main/README.md";
+            String fileName = et2.getText().toString();
+            if(isBlank(url)||isBlank(fileName)){
+                Toast.makeText(this,"连接和文件名不能为空",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String pd = this.getFilesDir().getAbsolutePath();
+            Log.d(TAG,pd);// 输出路径，方便查找
+            downLoad(url,pd+"/"+fileName);
+        });
+    }
+    public static void downLoad(final String path, final String FileName) {
+        //开启新的线程进行文件下载
+        new Thread(() -> {
+            try {
+                URL url = new URL(path);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setReadTimeout(5000);
+                con.setConnectTimeout(5000);
+                con.setRequestProperty("Charset", "UTF-8");
+                con.setRequestMethod("GET");
+                InputStream is = con.getInputStream();//获取输入流
+                FileOutputStream fileOutputStream = null;//文件输出流
+                if (is != null) {
+                    File file = new File(FileName);
+                    boolean isCreate = file.createNewFile();
+                    if(!isCreate){
+                        is.close();
+                        Log.e(TAG, "downLoad: 文件访问错误");
+                        return;
+                    }
+
+                    fileOutputStream = new FileOutputStream(file);//指定文件保存路径，
+                    byte[] buf = new byte[1024];
+                    int ch;
+                    while ((ch = is.read(buf)) != -1) {
+                        fileOutputStream.write(buf, 0, ch);//将获取到的流写入文件中
+                    }
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    is.close();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();//新线程的启动
+    }
+    private static boolean isBlank(String s){
+        if(s==null)return true;
+        boolean is = true;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)!=' '){
+                is = false;
+                break;
+            }
+        }
+        return is;
+    }
+}
+```
+
+## 运行效果(第二部分)
+
+![image-20230401131039719](./assets/index/image-20230401131039719.png)
+
+到`/data/data/你的程序包名+的工程名/file/`寻找下载的文件(有时需要点击Synchronize刷新)
+
+![image-20230401131157826](./assets/index/image-20230401131157826.png)
+
+![image-20230401131244677](./assets/index/image-20230401131244677.png)

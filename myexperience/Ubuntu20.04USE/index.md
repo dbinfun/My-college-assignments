@@ -213,6 +213,29 @@ docker run --name mysql \
 docker exec -it mysql mysql -u root -p
 ```
 
+在做后端开发的时候有时候会遇到`Public Key Retrieval is not allowed`的错误，可以参考[这里](https://blog.51cto.com/lwops/2491968)配置mysql证书
+
+主要命令是：
+
+```shell
+openssl genrsa 2048 > ca-key.pem #生成CA私钥
+openssl req -new -x509 -nodes -days 99999 -key ca-key.pem -out ca.pem #生成数字证书
+openssl req -newkey rsa:2048 -days 99999 -nodes -keyout server-key.pem -out server-req.pem #创建mysql私钥和请求证书
+openssl rsa -in server-key.pem -out server-key.pem #私钥转换为RSA格式
+openssl x509 -req -in server-req.pem -days 99999 -CA ca.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.pem # 用CA证书生成一个服务端的数字证书
+openssl req -newkey rsa:2048 -days 99999 -nodes -keyout client-key.pem -out client-req.pem #创建客户端RSA私钥和证书
+openssl rsa -in client-key.pem -out client-key.pem #将私钥转换为RSA格式
+openssl x509 -req -in client-req.pem -days 99999 -CA ca.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.pem #用CA证书生成一个客户端证书\
+#使用cp命令移动所有证书到 /usr/local/mysql/conf中，对应容器中的/etc/mysql
+#修改mysql配置文件(/usr/local/mysql/conf/my.cnf)
+#添加这几行
+ssl-ca=/etc/mysql/ca.pem
+ssl-cert=/etc/mysql/server-cert.pem
+ssl-key=/etc/mysql/server-key.pem
+```
+
+
+
 ### Redis
 
 创建`/home/redis/data`目录和`/home/redis/redis.conf`文件
