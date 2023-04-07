@@ -498,11 +498,11 @@ public class MainActivity2 extends AppCompatActivity {
 
 创建activity时这样创建，会自动创建布局文件哦。
 
-![截图 2023-04-07 20-01-16](./assets/index/截图 2023-04-07 20-01-16.png)
+![截图 2023-04-07 20-01-16](./assets/index/image-202304075.png)
 
 创建是选择LauncherActivity会自动注册活动，否则你就只能手动注册了，像实验二开头那样。
 
-![截图 2023-04-07 20-02-24](./assets/index/截图 2023-04-07 20-02-24.png)
+![截图 2023-04-07 20-02-24](./assets/index/image-202304076.png)
 
 ### 实验代码
 
@@ -930,11 +930,11 @@ public class VolcanoWord extends AppCompatActivity {
 
 渺小的DBin进入了冰雪世界
 
-![截图 2023-04-07 20-53-16](./assets/index/截图 2023-04-07 20-53-16.png)
+![截图 2023-04-07 20-53-16](./assets/index/image-202304072.png)
 
 DBin依然决然选择去大草原看看，我去，大草原热情的欢迎DBin的到来。
 
-![截图 2023-04-07 20-53-22](./assets/index/截图 2023-04-07 20-53-22.png)
+![截图 2023-04-07 20-53-22](./assets/index/image-202304071.png)
 
 火焰山也热热热热热热情的欢迎了DBin,不过太热了，DBin心情`bad`的离开了(点击返回按键)
 
@@ -942,11 +942,11 @@ DBin依然决然选择去大草原看看，我去，大草原热情的欢迎DBin
 
 Dbin跟随传送阵回到了大草原，哇，大草原居然知道我在火焰山过得很bad? Dbin表示有人关心自己很开心！
 
-![截图 2023-04-07 20-54-27](./assets/index/截图 2023-04-07 20-54-27.png)
+![截图 2023-04-07 20-54-27](./assets/index/image-202304073.png)
 
 最后Dbin回到了冰雪世界，唉，Dbin终究还是逃不过GouPi神的魔爪。他这辈子只能去火焰山和大草原玩耍了
 
-![截图 2023-04-07 20-54-33](./assets/index/截图 2023-04-07 20-54-33.png)
+![截图 2023-04-07 20-54-33](./assets/index/image-202304074png)
 
 ## 实验结论
 
