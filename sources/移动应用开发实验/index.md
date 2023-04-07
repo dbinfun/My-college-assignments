@@ -509,7 +509,7 @@ public class MainActivity2 extends AppCompatActivity {
 #### `IceWord.java`
 
 ```java
-package site.dbin.application1.jumps;
+package site.dbin.application1.jumps;//我的在默认的jumps包下
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -520,7 +520,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import site.dbin.application1.R;
+import site.dbin.application1.R;// 我的有导包，你的可能不需要
 
 public class IceWord extends AppCompatActivity {
     final String s = "冰雪世界";
@@ -725,7 +725,7 @@ public class VolcanoWord extends AppCompatActivity {
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".jumps.IceWord">
+    tools:context=".jumps.IceWord"><!--此处注意我的是jumps包,如果是默认的包可能没有.jumps只有.IceWord-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
