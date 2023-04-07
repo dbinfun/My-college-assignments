@@ -2,6 +2,8 @@
 
 我将实验全都写在一个工程内，所以启动类的名字有所区别，请注意到`AndroidManifest.xm`中修改正确的启动类。
 
+我使用的是`API25`的老机器，运行没啥大问题
+
 # 实验一
 
 ## 要求
@@ -477,6 +479,478 @@ public class MainActivity2 extends AppCompatActivity {
 ![image-20230328184133050](./assets/index/image-20230328184133050.png)
 
 ![image-20230328184209684](./assets/index/image-20230328184209684.png)
+
+# 作业二
+
+> 吐槽:为什么有这这这这么奇怪的作业????????
+
+## 要求
+
+写几个页面跳来跳去？
+
+## 实验设计
+
+伟大的GouPi大神创造了三个世界`冰雪世界`,`大草原`,`火焰山`,而渺小的人类(DBin)只能在其中挑来跳去，唯一能做的就是发泄自己的不满。(GouPi大神一定是DBin的死对头)
+
+## 实验代码和过程
+
+### 实验提示
+
+创建activity时这样创建，会自动创建布局文件哦。
+
+![截图 2023-04-07 20-01-16](./assets/index/截图 2023-04-07 20-01-16.png)
+
+创建是选择LauncherActivity会自动注册活动，否则你就只能手动注册了，像实验二开头那样。
+
+![截图 2023-04-07 20-02-24](./assets/index/截图 2023-04-07 20-02-24.png)
+
+### 实验代码
+
+#### `IceWord.java`
+
+```java
+package site.dbin.application1.jumps;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import site.dbin.application1.R;
+
+public class IceWord extends AppCompatActivity {
+    final String s = "冰雪世界";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ice_word);
+        Intent i = getIntent();
+        String data = i.getStringExtra("word");
+        // 当有上一个activity传递的值
+        if(data!=null){
+            TextView v = findViewById(R.id.ice_info);
+            v.setText("欢迎你从"+data+"来到冰雪世界");
+        }
+        Button jump = findViewById(R.id.ice_button1);
+        // 跳转
+        jump.setOnClickListener((v)->{
+            Intent intent = new Intent(this,PrairieWord.class);
+            intent.putExtra("word",s);
+            // 接受返回值的跳转
+            // 虽然不建议使用startActivityForResult，但是这里为了演示，就这样写了
+            startActivityForResult(intent,666);
+        });
+        Button jump2 = findViewById(R.id.ice_button2);
+        jump2.setOnClickListener((v)->{
+            Intent intent = new Intent(this,VolcanoWord.class);
+            intent.putExtra("word",s);
+            startActivityForResult(intent,666);
+        });
+    }
+    //当有返回值
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String message = "";
+        String word = data.getStringExtra("word");
+        if(word!=null&&word.length()>0)message+=("欢迎你从"+word+"回到"+s);
+        String mood = data.getStringExtra("mood");
+        if(mood!=null&&mood.length()>0)message+="，听说你在"+word+"的心情"+mood;
+        TextView v = findViewById(R.id.ice_info);
+        v.setText(message);
+    }
+    //返回按钮按下后，结束当前activity,并且返回值
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        EditText editText = findViewById(R.id.ice_edit);
+        if(editText!=null&&editText.getText().toString().length()>0){
+            intent.putExtra("mood",editText.getText().toString());
+        }
+        intent.putExtra("word",s);
+        setResult(666,intent);
+        finish();
+    }
+}
+```
+
+#### `PrairieWord.java`
+
+```java
+package site.dbin.application1.jumps;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import site.dbin.application1.R;
+
+public class PrairieWord extends AppCompatActivity {
+    final String s = "大草原";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_prairie_word);
+        Intent i = getIntent();
+        String data = i.getStringExtra("word");
+        if(data!=null){
+            TextView v = findViewById(R.id.pra_info);
+            v.setText("欢迎你从"+data+"来到大草原");
+        }
+        Button jump = findViewById(R.id.pra_button1);
+        jump.setOnClickListener((v)->{
+            Intent intent = new Intent(this,IceWord.class);
+            intent.putExtra("word",s);
+            startActivityForResult(intent,666);
+        });
+        Button jump2 = findViewById(R.id.pra_button2);
+        jump2.setOnClickListener((v)->{
+            Intent intent = new Intent(this,VolcanoWord.class);
+            intent.putExtra("word",s);
+            startActivityForResult(intent,666);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String message = "";
+        String word = data.getStringExtra("word");
+        if(word!=null&&word.length()>0)message+=("欢迎你从"+word+"回到"+s);
+        String mood = data.getStringExtra("mood");
+        if(mood!=null&&mood.length()>0)message+="，听说你在"+word+"的心情"+mood;
+        TextView v = findViewById(R.id.pra_info);
+        v.setText(message);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        EditText editText = findViewById(R.id.pra_edit);
+        if(editText!=null&&editText.getText().toString().length()>0){
+            intent.putExtra("mood",editText.getText().toString());
+        }
+        intent.putExtra("word",s);
+        setResult(666,intent);
+        finish();
+    }
+}
+```
+
+#### `VolcanoWord.java`
+
+```java
+package site.dbin.application1.jumps;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import site.dbin.application1.R;
+
+public class VolcanoWord extends AppCompatActivity {
+    final String s = "火焰山";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_volcano_word);
+        Intent i = getIntent();
+        String data = i.getStringExtra("word");
+        if(data!=null){
+            TextView v = findViewById(R.id.vol_info);
+            v.setText("欢迎你从"+data+"来到大草原");
+        }
+        Button jump = findViewById(R.id.vol_button1);
+        jump.setOnClickListener((v)->{
+            Intent intent = new Intent(this,IceWord.class);
+            intent.putExtra("word",s);
+            startActivityForResult(intent,666);
+        });
+        Button jump2 = findViewById(R.id.vol_button2);
+        jump2.setOnClickListener((v)->{
+            Intent intent = new Intent(this,PrairieWord.class);
+            intent.putExtra("word",s);
+            startActivityForResult(intent,666);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 666) {
+            String message = "";
+            String word = data.getStringExtra("word");
+            if(word!=null&&word.length()>0)message+=("欢迎你从"+word+"回到"+s);
+            String mood = data.getStringExtra("mood");
+            if(mood!=null&&mood.length()>0)message+="，听说你在"+word+"的心情"+mood;
+            TextView v = findViewById(R.id.vol_info);
+            v.setText(message);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        EditText editText = findViewById(R.id.vol_edit);
+        if(editText!=null&&editText.getText().toString().length()>0){
+            intent.putExtra("mood",editText.getText().toString());
+        }
+        intent.putExtra("word",s);
+        setResult(666,intent);
+        finish();
+    }
+}
+```
+
+#### `activity_ice_word.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".jumps.IceWord">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/ice_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="冰雪世界"
+            android:background="@color/purple_200"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/ice_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="这里好像什么都没有"
+            android:textSize="20sp" />
+        <EditText
+            android:id="@+id/ice_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="你可以在这里输入心情"/>
+        <Button
+            android:id="@+id/ice_button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去大草原看看,go"
+            android:textSize="20sp" />
+        <Button
+            android:id="@+id/ice_button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去火焰山看看,go"
+            android:textSize="20sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+#### `activity_prairie_word.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".jumps.PrairieWord">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/pra_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="大草原"
+            android:background="#4CAF50"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/pra_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="这里好像什么都没有"
+            android:textSize="20sp" />
+        <EditText
+            android:id="@+id/pra_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="你可以在这里输入心情"/>
+        <Button
+            android:id="@+id/pra_button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去冰雪世界看看,go"
+            android:textSize="20sp" />
+        <Button
+            android:id="@+id/pra_button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去火焰山看看,go"
+            android:textSize="20sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+#### `activity_volcano_word.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".jumps.VolcanoWord">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/vol_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="火焰山"
+            android:background="#E91E63"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/vol_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="这里好像什么都没有"
+            android:textSize="20sp" />
+        <EditText
+            android:id="@+id/vol_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="你可以在这里输入心情"/>
+        <Button
+            android:id="@+id/vol_button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去冰雪世界看看,go"
+            android:textSize="20sp" />
+        <Button
+            android:id="@+id/vol_button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="去大草原看看,go"
+            android:textSize="20sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+到这里，三大世界就被GouPi大神创建完毕了
+
+不过，GouPi大神还需要去AndroidManifest大神哪里去注册(在android宇宙，GouPi大神太渺小了)
+
+#### 注册活动
+
+`到AndroidManifest.xml`的`application`节点中添加以下类容
+
+```xml
+<!--注意包名,我的IceWord.java在jumps包下，请和你的包对应-->
+<activity
+    android:name=".jumps.IceWord"
+    android:exported="false" />
+<activity
+    android:name=".jumps.VolcanoWord"
+    android:exported="false" />
+<activity
+    android:name=".jumps.PrairieWord"
+    android:exported="false"/>
+```
+
+注意，我是通过其他activity进入‘冰雪世界的’，如果你想启动app就进入冰雪世界你需要这样
+
+```xml
+<activity
+    android:name=".jumps.IceWord"
+    android:exported="true">
+    android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+<activity
+    android:name=".jumps.VolcanoWord"
+    android:exported="false" />
+<activity
+    android:name=".jumps.PrairieWord"
+    android:exported="false"/>
+```
+
+### 运行结果
+
+渺小的DBin进入了冰雪世界
+
+![截图 2023-04-07 20-53-16](./assets/index/截图 2023-04-07 20-53-16.png)
+
+DBin依然决然选择去大草原看看，我去，大草原热情的欢迎DBin的到来。
+
+![截图 2023-04-07 20-53-22](./assets/index/截图 2023-04-07 20-53-22.png)
+
+火焰山也热热热热热热情的欢迎了DBin,不过太热了，DBin心情`bad`的离开了(点击返回按键)
+
+![image-20230407214940172](./assets/index/image-20230407214940172.png)
+
+Dbin跟随传送阵回到了大草原，哇，大草原居然知道我在火焰山过得很bad? Dbin表示有人关心自己很开心！
+
+![截图 2023-04-07 20-54-27](./assets/index/截图 2023-04-07 20-54-27.png)
+
+最后Dbin回到了冰雪世界，唉，Dbin终究还是逃不过GouPi神的魔爪。他这辈子只能去火焰山和大草原玩耍了
+
+![截图 2023-04-07 20-54-33](./assets/index/截图 2023-04-07 20-54-33.png)
+
+## 实验结论
+
+通过Intent 各个Activity之间可以传输数据，？？？？？那Dbin是数据吗????
 
 # 实验三
 
@@ -1442,4 +1916,3 @@ public class MainActivity4 extends AppCompatActivity {
 效果如下
 
 ![image-20230401163638063](./assets/index/image-20230401163638063.png)
-

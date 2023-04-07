@@ -1,3 +1,17 @@
+# 前言
+
+gcc编译命令是：
+
+```shell
+gcc server.c -o server.out
+```
+
+`server.c`为源文件，`server.out`是输出的可执行文件
+
+gcc版本请在11以上
+
+最后一个实验要使用g++11或以上
+
 # 实验一：TCP
 
 ## `tcp_server.c`
