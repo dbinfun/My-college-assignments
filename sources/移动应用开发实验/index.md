@@ -911,7 +911,6 @@ public class VolcanoWord extends AppCompatActivity {
 <activity
     android:name=".jumps.IceWord"
     android:exported="true">
-    android:exported="true">
     <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
