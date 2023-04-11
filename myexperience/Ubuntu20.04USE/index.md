@@ -283,6 +283,10 @@ docker exec -it redis redis-cli
 nload -m
 ```
 
+# 开发工具安装
+
+## Navicat
+
 # 个性软件的安装
 
 ## 网易云音乐
