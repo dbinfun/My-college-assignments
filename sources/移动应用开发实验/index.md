@@ -480,7 +480,7 @@ public class MainActivity2 extends AppCompatActivity {
 
 ![image-20230328184209684](./assets/index/image-20230328184209684.png)
 
-# 作业二
+# 作业一
 
 > 吐槽:为什么有这这这这么奇怪的作业????????
 
@@ -1300,6 +1300,345 @@ public class DownloadFile extends AppCompatActivity {
 ![image-20230401131157826](./assets/index/image-20230401131157826.png)
 
 ![image-20230401131244677](./assets/index/image-20230401131244677.png)
+
+# 作业二
+
+tips: 本次作业中有以下注释包裹的代码可以忽略(因为里面涉及适配器和广播)
+
+```java
+/***plus***/
+```
+
+```xml
+<!--plus-->
+```
+
+准备：
+
+准备一个mp3格式的文件放在res/raw下,命名最好是英文，中文好像会报错。
+
+我这里是赵雷的我记得。
+
+![image-20230413143734073](./assets/index/image-20230413143734073.png)
+
+## 要求
+
+实现(定时)服务
+
+## 实验代码
+
+### `activity_my_service_start.xml`
+
+这是布局文件
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyServiceStart">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/start_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="定时" />
+        <Button
+            android:id="@+id/service.stop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="关闭" />
+        <!--plus-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="当前运行的闹钟"/>
+        <ListView
+            android:id="@+id/service.list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+        <!--plus-->
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MusicPlayerService`
+
+这是服务类
+
+```java
+package site.dbin.application1.music;
+
+import android.app.Service;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.IBinder;
+import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.io.IOException;
+
+import site.dbin.application1.MyServiceStart;
+import site.dbin.application1.R;
+
+public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+    // 官方文档：https://developer.android.com/reference/android/media/MediaPlayer#setOnPreparedListener(android.media.MediaPlayer.OnPreparedListener)
+    // 方法介绍：https://blog.csdn.net/Jason_Julie/article/details/115549602
+    private static final String TAG = "MusicPlayerService";
+    private MediaPlayer mediaPlayer;
+    private boolean isPrepared = false;// 好像没啥用
+    private boolean isStart = false;
+    /***plus***/
+    private LocalBroadcastManager localBroadcastManager;
+    private String time;
+    /***plus***/
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mediaPlayer = MediaPlayer.create(this, R.raw.wojide);// 这里注意和自己的文件对应
+        mediaPlayer.setOnPreparedListener(this); // 注册回调函数，当准备好的时候会回调onPrepared方法
+        mediaPlayer.setOnCompletionListener(this); // 注册回调函数，当播放完成的时候会回调onCompletion方法
+        /***plus***/
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        /***plus***/
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            /***plus***/
+            time = intent.getStringExtra("time");
+            /***plus***/
+            String action = intent.getAction();
+            if ("PLAY_MUSIC".equals(action)) {
+                if(mediaPlayer==null){
+                    mediaPlayer = MediaPlayer.create(this, R.raw.wojide);
+                    mediaPlayer.setOnPreparedListener(this); // 注册回调函数，当准备好的时候会回调onPrepared方法
+                    mediaPlayer.setOnCompletionListener(this); // 注册回调函数，当播放完成的时候会回调onCompletion方法
+                }
+               isStart = true;
+            }
+            // 停止播放
+            if("STOP_MUSIC".equals(action)){
+                if(mediaPlayer!=null){
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                    isPrepared = false;
+                }
+            }
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release(); // 释放相关资源，官方文档说一旦不使用了就一定要调用。
+            mediaPlayer = null;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        isPrepared = true;
+        if(isStart){
+            mediaPlayer.start();
+            /***plus***/
+            // 发送广播
+            Intent intent = new Intent(MyServiceStart.BROADCAST_ACTION);
+            if(time!=null){
+                intent.putExtra("time",time);
+            }
+            localBroadcastManager.sendBroadcast(intent);
+            /***plus***/
+        }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        stopSelf();
+    }
+}
+```
+
+### `MyServiceStart`
+
+这是java代码
+
+```java
+package site.dbin.application1;
+
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.icu.util.Calendar;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import site.dbin.application1.music.MusicPlayerService;
+
+public class MyServiceStart extends AppCompatActivity {
+    /***plus***/
+    private Map<String,PendingIntent> map  = Collections.synchronizedMap(new HashMap<>());
+    private ArrayAdapter<String> adapter = null;
+    private List<String> list = new ArrayList();
+
+    private IntentFilter intentFilter;
+    private LocalReceiver localReceiver;
+    private LocalBroadcastManager localBroadcastManager;
+
+    public static final String BROADCAST_ACTION = "site.dbin.application1.MyServiceStart";
+    /***plus***/
+    Button button =null;
+    ListView listView = null;
+    AlarmManager alarmManager =null;
+    private Integer alarmId = 0; // 用于区分不同的闹钟
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_service_start);
+        alarmManager= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        button = findViewById(R.id.start_service);
+        /***plus***/
+        listView = findViewById(R.id.service_list);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            String key = ((TextView) view).getText().toString();
+            PendingIntent intent = map.get(key);
+            map.remove(key);
+            alarmManager.cancel(intent);
+            adapter.remove(key);
+        });
+        /***plus***/
+        // 选择时间
+        button.setOnClickListener((v)->{
+            //v.setEnabled(false);
+            Calendar t = Calendar.getInstance();
+            new DatePickerDialog(this,(view,year,month,dayOfMonth)->{
+                new TimePickerDialog(this,(view2,hourOfDay,minute)->{
+                    Intent playIntent = new Intent(this, MusicPlayerService.class);
+                    String time = year+"年,"+month+"月,"+dayOfMonth+"日,"+hourOfDay+"时,"+minute+"分";
+                    playIntent.putExtra("time",time);
+                    playIntent.setAction("PLAY_MUSIC");
+                    PendingIntent pendingIntent = PendingIntent.getService(this,alarmId++,playIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(year,month,dayOfMonth,hourOfDay,minute,0);
+                    // 因为省点等原因，直接用set会有延迟，所以用这个方法，参见官方文档https://developer.android.com/reference/android/app/AlarmManager#setAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                    // RTC_WAKEUP 是绝对时间。
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+                    /***plus***/
+                    this.addView(time);
+                    map.put(time,pendingIntent);
+                    /***plus***/
+                    Toast.makeText(this,"设置成功："+ time,Toast.LENGTH_SHORT).show();
+                },t.get(Calendar.HOUR_OF_DAY),t.get(Calendar.MINUTE)+1,true).show();// 默认设置当前时间+1分钟
+            },t.get(Calendar.YEAR),t.get(Calendar.MONTH),t.get(Calendar.DAY_OF_MONTH)).show();// 默认设置问当前日期
+        });
+        Button button1 = findViewById(R.id.service_stop);
+        button1.setOnClickListener((v)->{
+            Intent playIntent = new Intent(this, MusicPlayerService.class);
+            playIntent.setAction("STOP_MUSIC");
+            startService(playIntent);
+        });
+        /***plus***/
+        // 注册广播
+        localBroadcastManager = LocalBroadcastManager.getInstance(this); // 获取实例
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(BROADCAST_ACTION);
+        localReceiver = new LocalReceiver();
+        localBroadcastManager.registerReceiver(localReceiver, intentFilter);
+        /***plus***/
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    public void finish() {
+        stopService(new Intent(this, MusicPlayerService.class));
+        localBroadcastManager.unregisterReceiver(localReceiver);
+        super.finish();
+    }
+
+    /***plus***/
+    private void addView(String time){
+        adapter.add(time);
+        adapter.notifyDataSetChanged();
+    }
+    // 移除列表
+    private void removeView(String time){
+        adapter.remove(time);
+        adapter.notifyDataSetChanged();
+    }
+
+    class LocalReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 接受广播后的处理，播放的闹钟从列表中移除
+            String time = intent.getStringExtra("time");
+            removeView(time);
+            PendingIntent i = map.get(time);
+            map.remove(time);
+        }}
+    /***plus***/
+}
+```
+
+### 注册服务
+
+tips: 同事也要注册MyServiceStart这个Activity,可以参考前面的注册方法，到AndroidManfest.xml注册
+
+注册服务有一点不一样，如下：
+
+```xml
+<service
+            android:name=".music.MusicPlayerService"
+            android:exported="false"/>
+```
+
+## 运行效果
+
+选择时间，然后到时间就会播放音乐
+
+![截图 2023-04-13 14-27-34](./assets/index/截图 2023-04-13 14-27-34.png)
 
 # 实验四
 
