@@ -279,6 +279,8 @@ docker exec -it redis redis-cli
 
 ## 显示网速
 
+命令行直接输入，或者打开图形界面系统监视器
+
 ```shell
 nload -m
 ```
@@ -319,6 +321,14 @@ exec "${HERE}"/netease-cloud-music $@
 我下载安装后无法运行，于是我去网易云里面复制了一个so文件到`/opt/uTools/`目录下就可以了
 
 附件[libcrypto.so.1.1](./assets/libcrypto.so.1.1) 
+
+# 使用技巧
+
+- 文件管理器输入路径
+
+  `ctrl+L` 直接在路径栏输入路径
+  
+- 双系统使用同一个蓝牙鼠标: 参见知乎这篇文章[芜湖~~~](https://zhuanlan.zhihu.com/p/466962255) 
 
 # 问题解决
 

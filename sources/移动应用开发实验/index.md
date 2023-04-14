@@ -1295,6 +1295,10 @@ public class DownloadFile extends AppCompatActivity {
 
 ![image-20230401131039719](./assets/index/image-20230401131039719.png)
 
+通过 Device Manager 的虚拟的的 Open this device in.... 进入虚拟机的文件管理器
+
+![image-20230414180842459](./assets/index/image-20230414180842459.png)
+
 到`/data/data/你的程序包名+的工程名/file/`寻找下载的文件(有时需要点击Synchronize刷新)
 
 ![image-20230401131157826](./assets/index/image-20230401131157826.png)
