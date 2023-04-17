@@ -1,3 +1,5 @@
+[TOC]
+
 # 软件安装与卸载
 
 ## 安装
@@ -324,11 +326,42 @@ exec "${HERE}"/netease-cloud-music $@
 
 # 使用技巧
 
-- 文件管理器输入路径
+- 文件管理器直接输入路径
 
   `ctrl+L` 直接在路径栏输入路径
   
 - 双系统使用同一个蓝牙鼠标: 参见知乎这篇文章[芜湖~~~](https://zhuanlan.zhihu.com/p/466962255) 
+
+- 防火墙命令
+
+  ```shell
+  sudo ufw status #查看防火墙状态
+  sudo ufw status verbose #更多详细情况
+  sudo ufw enable #开启防火墙
+  sudo ufw disable #关闭防火墙
+  sudo ufw version #查看防火前版本
+  sudo ufw default allow #默认允许外部访问本机
+  sudo ufw default deny #拒绝外部访问本机
+  sudo ufw allow 53 #允许外部访问53端口
+  sudo ufw deny 53 #拒绝外部访问53端口
+  sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
+  sudo ufw status numbered # 输出防火墙规则包括其id(id永远从1开始)
+  sudo ufw delete 1 #删除id为1的规则
+  sudo ufw delete allow 8080 #删除8080端口规则
+  sudo ufw reset #重置防火墙
+  ```
+
+- 安装扩展——安装扩展可以使得很多事情变得方便，参考[这篇文章](https://blog.csdn.net/u014175785/article/details/111059396)安装(使用chrom gnome shell集成扩展更方便),下面推荐几个扩展:
+
+  - [user-themes](https://extensions.gnome.org/extension/19/user-themes/) ——更多好看的主题
+    - [Flat-Remix-Gnome](https://drasite.com/flat-remix-gnome)——正在使用的主题
+
+  - [add to desktop](https://extensions.gnome.org/extension/3240/add-to-desktop/) ——更轻松添加桌面图标
+  - [dash to dock](https://extensions.gnome.org/extension/307/dash-to-dock/) ——更好用的dock栏
+  - [hide to bar](https://extensions.gnome.org/extension/545/hide-top-bar/)——自动隐藏状态栏
+  - [places-status-indicator](https://extensions.gnome.org/extension/8/places-status-indicator/) ——状态栏添加文件浏览
+  - [applications-menu](https://extensions.gnome.org/extension/6/applications-menu/)——状态栏添加应用浏览
+
 
 # 问题解决
 

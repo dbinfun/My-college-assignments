@@ -27,6 +27,7 @@ Ubuntu
 
 ```shell
 sudo ufw status #查看防火墙状态
+sudo ufw status verbose #更多详细情况
 sudo ufw enable #开启防火墙
 sudo ufw disable #关闭防火墙
 sudo ufw version #查看防火前版本
@@ -35,6 +36,10 @@ sudo ufw default deny #拒绝外部访问本机
 sudo ufw allow 53 #允许外部访问53端口
 sudo ufw deny 53 #拒绝外部访问53端口
 sudo ufw allow from 192.168.0.1 #允许某个IP地址访问本机所有端口
+sudo ufw status numbered # 输出防火墙规则包括其id(id永远从1开始)
+sudo ufw delete 1 #删除id为1的规则
+sudo ufw delete allow 8080 #删除8080端口规则
+sudo ufw reset #重置防火墙
 ```
 
 ### 查看防火墙
