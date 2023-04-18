@@ -291,7 +291,7 @@ nload -m
 
 ## Navicat
 
-# 个性软件的安装
+# 一些软件的安装
 
 ## 网易云音乐
 
@@ -323,6 +323,34 @@ exec "${HERE}"/netease-cloud-music $@
 我下载安装后无法运行，于是我去网易云里面复制了一个so文件到`/opt/uTools/`目录下就可以了
 
 附件[libcrypto.so.1.1](./assets/libcrypto.so.1.1) 
+
+## WireShark
+
+网上有很多关于linux 安装 wireshark的教程，两种安装方法
+
+1. 命令行安装
+
+   ```shell
+   apt show wireshark #查看可以安装的版本
+   sudo apt update
+   sudo apt install wireshark
+   ```
+
+2. 直接通过snap商店安装
+
+安装完毕后运行以下命令(运行后的大概意思就是普通用户获取数据包有风险，是否要开启) 选择yes，允许非root用户抓包
+
+```shell
+sudo dpkg-reconfigure wireshark-common
+```
+
+然后将当前用户加入到wireshark用户组中(dbinfun是自己的用户名)
+
+```shell
+sudo usermod -aG wireshark dbinfun
+```
+
+
 
 # 使用技巧
 
