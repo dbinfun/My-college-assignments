@@ -44,7 +44,7 @@ tar -zxvf ****.tar -C /***/***
 
 ## 图标的创建
 
-在Ubuntu中使用`deb`文件安装应用，一般可以在应用程序中找到图标,但是想要在桌面创建图标却不能直接拖动。Ubuntu桌面应用图标的格式是`.desktop`,下面是Ubuntu的桌面图标的源文件的主要类容
+在Ubuntu中使用`deb`文件安装应用，一般可以在应用程序中找到图标,但是想要在桌面创建图标却不能直接拖动。Ubuntu桌面应用图标的格式是`.desktop`,下面是Ubuntu的桌面图标的源文件的主要类容（通过添加扩展可以快速将菜单图标添加到桌面）
 
 ```properties
 [Desktop Entry]
@@ -73,7 +73,7 @@ Categories=Development;
 
 1. `/usr/share/applications` - 这个文件夹中存储了系统安装的所有应用程序的.desktop文件，包括软件中心中的应用程序。
 2. `/usr/local/share/applications` - 这个文件夹中存储了本地安装的应用程序的.desktop文件。
-3. `~/.local/share/applications` - 这个文件夹中存储了当前用户安装的应用程序的.desktop文件。
+3. `~/.local/share/applications` - 这个文件夹中存储了当前用户安装的应用程序的.desktop文件，卸载了图标还在的软件图标可能就在这里。
 
 在收藏夹中的应用程序的desktop文件存储在以下位置：`~/.local/share/applications`
 
