@@ -6,9 +6,8 @@ It was a repository for recording certain assignments from my university. Maybe 
 
 # 仓库目录
 
-1. [移动应用开发实验](./notice.md)
-2. [个人经验总结](./myexperience/index.md)
-3. [归档](./archive/index.md)
+1. [个人经验总结](./myexperience/index.md)
+2. [归档](./archive/index.md)
 
 # 温馨提示
 
