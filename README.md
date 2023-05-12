@@ -14,7 +14,8 @@ It was a repository for recording certain assignments from my university. Maybe 
 
 1. [个人经验总结](./myexperience/index.md)
 2. [移动应用开发复习](./sources/移动应用开发复习/index.md)
-3. [归档](./archive/index.md)
+3. [路由与交换命令总结](./sources/路由与交换/命令总结.md)
+4. [归档](./archive/index.md)
 
 # 温馨提示
 
