@@ -178,6 +178,23 @@ sudo apt-get install npm
 
 按照[阿里云Maven仓库镜像官网](https://developer.aliyun.com/mvn/guide)配置指南配置即可
 
+## Golang
+
+这里有我正在看的一篇golang教程: [8小时转职Golang工程师 (yuque.com)](https://www.yuque.com/aceld/mo95lb)
+
+到[Golang官网](https://golang.google.cn/dl/)下载对应的版本，解压到喜欢的目录，比如`/usr/local/go1.20.4`
+
+在`/etc/profile`(`sudo vim /etc/profile`)中添加以下内容
+
+```properties
+export GOROOT="/usr/local/go/go1.20.4"
+export GOPATH=$HOME/go
+export GOBIN=$GOROOT/bin
+export PATH=$PATH:$GOBIN
+```
+
+运行`source /etc/profile`即可
+
 ## Doker
 
 安装阿里云官方的[教程安装docker-ce](https://developer.aliyun.com/mirror/docker-ce?spm=a2c6h.13651102.0.0.2cd51b11kEu5bg)
@@ -287,15 +304,38 @@ docker exec -it redis redis-cli
 nload -m
 ```
 
+## 键鼠跨屏操作
+
+`Synergy` 可以使用一套键鼠跨设备操作多台设备，自持很多平台(Win,Mac,Ubuntu,Debian,树莓派等等)
+
+(付费,有老版本不用付费,但是系统兼容不好，建议支持正版)
+
+[荔枝商城购买有优惠](https://store.lizhi.io/site/products/id/511)
+
+[官网](https://symless.com/synergy)
+
+在ubuntu22.04出现`Wayland workaround`错误，可以参考官网解决问题https://symless.com/synergy-help/synergy-on-ubuntu-21-04
+
 # 开发工具安装
 
 ## Navicat
+
+[下载地址](https://navicat.com.cn/download/navicat-premium)
+
+直接运行`.AppImage`文件即可，不过navicat Linux端没有pojie版本(或者说少,或者说pojie复杂)，但是可以写一个脚本清除配置信息，然后无限试用(又能力请支持正版)
+
+(注意：运行下面这个脚本前一定要导出连接备份)
+
+```shell
+rm -rf ~/.config/navicat
+rm -rf ~/.config/dconf/user
+```
 
 # 一些软件的安装
 
 ## 网易云音乐
 
-电脑怎么能少了网易云呢？🤪🤪🤪🤪🤪🤪🤪
+电脑怎么能少了网易云呢？(一边听网易云，一边写代码，女神再次爱上我)🤪🤪🤪🤪🤪🤪🤪
 
 从[网易云音乐官网](https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb)可以下载到.deb格式的安装包,我的是Ubuntu20.04还能用，不顾刚下载的时候打不开(好用，要是能打开就好了🤪)
 
@@ -378,6 +418,8 @@ sudo usermod -aG wireshark dbinfun
   sudo ufw delete allow 8080 #删除8080端口规则
   sudo ufw reset #重置防火墙
   ```
+
+  linux防火墙的开启，会导致各种其他问题，比如docker无法通过`172.17.0.1`访问宿主机，需要在防火墙中放行`172.17.0.0/24`网段
 
 - 安装扩展——安装扩展可以使得很多事情变得方便，参考[这篇文章](https://blog.csdn.net/u014175785/article/details/111059396)安装(使用chrom gnome shell集成扩展更方便),下面推荐几个扩展:
 
