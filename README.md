@@ -4,11 +4,11 @@ It was a repository for recording certain assignments from my university. Maybe 
 
 这是一个记录我的大学学习的仓库,如果你觉得对你有所帮助,请点个star! Thanks.
 
-本仓库已同步到[私人git仓库](https://git.dbin.site/dbinfun/My-college-assignments)
+本仓库已同步到[私人git仓库](https://git.dbinfun.net/dbinfun/My-college-assignments)
 
 本仓库GitHub地址:[My-college-assignments](https://github.com/dbinfun/My-college-assignments)
 
-本仓库私人Gitea仓库地址:[My-college-assignments](https://git.dbin.site/dbinfun/My-college-assignments) (+8时区夜间访问慢)
+本仓库私人Gitea仓库地址:[My-college-assignments](https://git.dbinfun.net/dbinfun/My-college-assignments) (+8时区夜间访问慢)
 
 如果你和我在同一所学校，且正在使用校园网可以访问[My-college-assignments](http://10.62.0.218:3000/dbinfun/My-college-assignments) (可能会失效)
 
