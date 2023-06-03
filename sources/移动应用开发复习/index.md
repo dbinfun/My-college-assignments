@@ -1,6 +1,12 @@
 这是一个安卓复习记录，我觉得不考的东西都~~删除线~~伺候 🗑️
 
+tips: `github`左上角↖或者右上角↗有目录
+
 🍎:**很重要吧？**
+
+其中第二章用户界面何第三章多界面最重要
+
+内容仅供参考
 
 [TOC]
 
@@ -125,6 +131,16 @@ Android系统是基于Linux内核的，这一层为Android设备的各种硬件�
 View是用户界面组件的共同父类，几乎所有的用户界面组件都是继承View类而实现的，如TextView、Button、EditText等。 
 
 对View类及其子类的属性进行设置，可以在布局文件XML中设置，也可以通过成员方法在Java代码文件中动态设置。
+
+组件大小单位：
+
+- px（像素）：是屏幕上的最小单位，通常用于描述屏幕分辨率或图像大小。在 Android 开发中，通常使用 px 来指定视图的大小和位置。
+
+- dpi（每英寸点数）：是显示器每英寸上的像素数量。通常用于描述设备的屏幕密度。在 Android 开发中，通常使用 dpi 来指定资源的尺寸，例如图标和图片。
+
+- dp（密度无关像素）：是一种抽象的单位，用于描述在不同屏幕密度下的视图大小和位置。在 Android 开发中，通常使用 dp 来指定视图的大小和位置，以确保在不同屏幕密度下保持一致。
+
+- sp（可缩放像素）：与 dp 类似，但它还考虑了用户的字体大小偏好。在 Android 开发中，通常使用 sp 来指定文本的大小，以确保在不同屏幕密度和用户字体大小偏好下保持一致。
 
 ### 常见组件的方法和属性
 
@@ -442,3 +458,407 @@ xmlCopy code<GridLayout
 - `android:columnCount`：指定网格的列数。
 - `layout_columnSpan`:设置组件占据列数
 - `layout_rowSpan`:设置组件占据行数
+
+# 多界面
+
+## 活动直接的数据传递🍎
+
+`MainActivity`-->`MainActivity2`-->`MainActivity`的数据传递
+
+`MainActivity`:
+
+```java
+package com.example.demo;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);// 将Activity和布局关联
+        Button button = findViewById(R.id.main_buttom);
+        button.setOnClickListener(view -> {
+            Bundle bundle = new Bundle();// 创建Budle
+            bundle.putString("key","String");// 放入数据
+            Intent intent = new Intent();//创建Intent
+            intent.setClass(this,MainActivity2.class);// 关联活动
+            intent.putExtra("bundle",bundle);// 放入数据
+            // 也可以直接放入数据
+            intent.putExtra("key2","String2");
+            startActivity(intent); //跳转,没有返回结果
+            //startActivityForResult(intent,1);// 有返回结果
+        });
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // 重新启动时的代码
+    }
+
+    @Override
+    public void onBackPressed() {
+        // 前面写代码
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 程序重新进入的代码
+    }
+    // 获取返回结果
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    String s = data.getStringExtra("return");
+                    Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
+```
+
+`MainActivity2`
+
+```java
+package com.example.demo;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+public class MainActivity2 extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+        Intent intent = getIntent();
+        String s = intent.getBundleExtra("bundle").getString("key");// 获取bundle的数据
+        String s2 = intent.getStringExtra("key2");// 直接获取intent的数据
+        Toast.makeText(this,s,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,s2,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("return","hello");
+        setResult(RESULT_OK,intent);// 设置返回结果
+        super.onBackPressed();// 返回
+    }
+}
+```
+
+## 菜单
+
+Activity有这些方法可以别重写以操控菜单：
+
+| **方   法**                           | **说   明**                              |
+| ------------------------------------- | ---------------------------------------- |
+| onCreateOptionMenu(Menu menu)         | 用于初始化菜单，menu为Menu对象实例。     |
+| onPrepareOptionsMenu(Menu menu)       | 改变菜单状态，在菜单显示前调用。         |
+| onOptionsMenuClosed(Menu menu)        | 菜单被关闭时调用。                       |
+| onOptionsItemSelected(MenuItem  item) | 菜单项被点击时调用，即菜单项的监听方法。 |
+
+示例：
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(1,1,1,"hello1");// 添加菜单
+        return super.onCreateOptionsMenu(menu);
+    }
+	// 菜单点击事件，在这里会输出hello1
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Toast.makeText(this,item.getTitle(),Toast.LENGTH_SHORT).show();
+        return super.onOptionsItemSelected(item);
+    }
+}
+```
+
+## 对话框
+
+### 消息对话框🍎
+
+| **方   法**                  | **说   明**                 |
+| ---------------------------- | --------------------------- |
+| AlertDialog.Builder(Context) | 对话框Builder对象的构造方法 |
+| create();                    | 创建AlertDialog对象         |
+| setTitle();                  | 设置对话框标题              |
+| setIcon();                   | 设置对话框图标              |
+| setMessage();                | 设置对话框的提示信息        |
+| setItems();                  | 设置对话框要显示的一个list  |
+| setPositiveButton();         | 在对话框中添加"yes"按钮     |
+| setNegativeButton();         | 在对话框中添加"no"按钮      |
+| show();                      | 显示对话框                  |
+| dismiss();                   | 关闭对话框                  |
+
+示例：
+
+```java
+public class MainActivity extends AppCompatActivity {
+    private AlertDialog alert = null;
+    private AlertDialog.Builder builder = null;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);// 将Activity和布局关联
+        Button button = findViewById(R.id.main_buttom);
+
+        button.setOnClickListener(view -> {
+            alert = null;
+            builder = new AlertDialog.Builder(this);// 构建器
+            alert = builder
+                    .setTitle("提示：")
+                    .setMessage("你点击了按钮")
+                    .setPositiveButton("确定", (dialog, which) -> {})
+                    .create();// 创建对话框
+            alert.show();
+        });
+    }
+}
+```
+
+### 进度条对话框
+
+| 方   法                                                      | 说   明                    |
+| ------------------------------------------------------------ | -------------------------- |
+| getMax()                                                     | 获取对话框进度的最大值     |
+| getProgress()                                                | 获取对话框当前进度值       |
+| onStart()                                                    | 开始调用对话框             |
+| setMax(int max)                                              | 设置对话框进度的最大值     |
+| setMessage(CharSequence message)                             | 设置对话框的文本内容       |
+| setProgress(int value)                                       | 设置对话框当前进度         |
+| show(Context context,  CharSequence title, CharSequence message) | 设置对话框的显示内容和方式 |
+| ProgressDialog(Context context)                              | 对话框的构造方法           |
+
+### 日期选择对话框
+
+| **方   法**                                                  | **说   明**                        |
+| ------------------------------------------------------------ | ---------------------------------- |
+| updateDate(int year, int monthOfYear, int dayOfMonth)        | 设置DatePickerDialog对象的当前日期 |
+| onDateChanged(DatePicker view, int year, int month, int  day) | 修改DatePickerDialog对象的日期     |
+| updateTime(int hourOfDay, int minutOfHour)                   | 设置TimePickerDialog对象的时间     |
+| onTimeChanged(TimePicker view, int hourOfDay, int minute)    | 修改TimePickerDialog对象的时间     |
+
+示例见作业二`MyServiceStart`代码
+
+# 后台服务和系统服务
+
+见PPT
+
+广播和服务示例代码见作业二代码
+
+# 网络通信
+
+## <del>Web视图</del>
+
+略...
+
+## TCP
+
+TCP是`面向连接`的通信协议，TCP提供两台计算机之间的`可靠无差错`的数据传输。
+
+UDP是`无连接`通信协议，UDP`不保证可靠数据`的传输。 
+
+### IP
+
+在Java.net包中，IP地址由一个称作InetAddress的特殊的类来描述
+
+`getLocalHost( )`返回一个本地主机的IP地址。
+`getByName(String host )`返回对应于指定主机的IP地址。
+`getAllByName(String host )`对于某个主机有多个IP地址（多宿主机）可用于得到一个IP地址数组。
+此外，对一个InetAddress的实例可以使用getAddress( )获得一个用字节数组形式表示的IP地址。 
+
+### Socket
+
+`getInputStream( )`：获得一个输入流，读取从网络线路上传送来的数据信息。
+`getOutputStream( )`：获得一个输出流，用这个输出流将数据信息写入到网络“线路”上。
+
+`ServerSocket(int port)`:创建Socket
+
+`Socket.accept()`: accept
+
+### HttpClient🍎
+
+1. 创建HttpClient对象。
+
+2. 创建请求方法的实例，并指定请求URL。如果需要发送GET请求，创建HttpGet对象；如果需要发送POST请求，创建HttpPost对象。
+
+3. 如果需要发送请求参数，可调用HttpGet、HttpPost共同的setParams(HttpParams params)方法来添加请求参数；对于HttpPost对象而言，也可调用setEntity(HttpEntity entity)方法来设置请求参数。
+
+4. 调用HttpClient对象的execute(HttpUriRequest request)发送请求，该方法返回一个*HttpResponse*。
+
+5. 调用HttpResponse的getAllHeaders()、getHeaders(String name)等方法可获取服务器的响应头；调用HttpResponse的getEntity()方法可获取HttpEntity对象，该对象包装了服务器的响应内容。程序可通过该对象获取服务器的响应内容。
+
+6. 释放连接。无论执行方法是否成功，都必须释放连接
+
+由于HttpClient api版本不同方法不同，所以没有示例
+
+### HttpUrlConnection
+
+```java
+void test(String urls){
+    try {
+        URL url = new URL(urls);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setReadTimeout(5000);
+        con.setConnectTimeout(5000);
+        con.setRequestProperty("Charset", "UTF-8");
+        con.setRequestMethod("GET");
+        InputStream is = con.getInputStream();//获取输入流
+        FileOutputStream fileOutputStream = null;//文件输出流
+        // 流操作.....
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
+
+# 数据储存
+
+SQLite数据库是一个关系型数据库，因为它很小，引擎本身只有一个大小不到 300KB的文件，所以常作为嵌入式数据库内嵌在应用程序中。 
+SQLite生成的数据库文件是一个普通的磁盘文件，可以放置在任何目录下。 
+SQLite数据库的管理工具很多，比较常用的有SQLite Expert Professional。
+在Android 系统的内部集成了 SQLite数据库，所以 Android 应用程序可以很方便地使用 SQLite 数据库来存储数据。 
+
+`SQLiteDatabase`
+
+| 方   法                                                      | 说   明          |
+| ------------------------------------------------------------ | ---------------- |
+| openOrCreateDatabase(String path, SQLiteDatabase.CursorFactory factory) | 打开或创建数据库 |
+| openDatabase(String path, SQLiteDatabase.CursorFactory factory，int flags) | 打开指定的数据库 |
+| insert(String table, String nullColumnHack, ContentValues values) | 新增一条记录     |
+| delete(String table,String whereClause, String[] whereArgs)  | 删除一条记录     |
+| query(String table,String[] columns,String selection, String[]selectionArgs,  String groupBy,String having, String orderBy) | 查询一条记录     |
+| update(String table,ContentValues values,String whereClause,String[] whereArgs) | 修改记录         |
+| execSQL(String sql)                                          | 执行一条SQL语句  |
+| close()                                                      | 关闭数据库       |
+
+`SQLiteOpenHelper`
+
+| 方   法                               | 说   明                        |
+| ------------------------------------- | ------------------------------ |
+| onCreate（SQLiteDatabase）            | 首次生成数据库时候调用该方法。 |
+| onOpen（SQLiteDatabase）              | 调用已经打开的数据库。         |
+| onUpgrade（SQLiteDatabase，int，int） | 升级数据库时调用。             |
+| getWritableDatabase()                 | 读写方式创建或打开数据库。     |
+| getReadableDatabase()                 | 创建或打开数据库。             |
+
+示例：
+
+🍎:`Cursor` ,`ContentValues` ,`SQLiteDatabase.insert()` ,`SQLiteDatabase.update()` ,`SQLiteDatabase.query()`
+
+```java
+public class DBHelper extends SQLiteOpenHelper {
+    public static final String DATABASE_NAME = "my_database.db";
+    public static final int DATABASE_VERSION = 1;
+    public static final String TABLE_NAME = "my_table";
+    private static final String ID = "_id";
+    private static final String USERNAME = "username";
+    private static final String PHONE = "phone";
+    private static final String EMAIL = "email";
+    private static final String Address = "address";
+    
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE_NAME + " (" +
+            ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            USERNAME + " TEXT, "+
+            PHONE + " TEXT, "+
+            EMAIL + " TEXT, "+
+            Address + " TEXT"+
+            ")";
+    public DBHelper(@Nullable Context context) {
+        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(CREATE_TABLE_SQL);// 创建数据库
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        //......
+    }
+	// 插入数据
+    public boolean insert(Info info){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USERNAME, info.getUsername());
+        contentValues.put(PHONE, info.getPhone());
+        contentValues.put(EMAIL, info.getEmail());
+        contentValues.put(Address, info.getAddress());
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        db.close();
+        return result > 0;
+    }
+	// 删除数据
+    public int delete(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, ID + "=" + id, null);// 删除条件
+        db.close();
+        return result;
+    }
+	// 更新
+    public int update(Info info){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USERNAME, info.getUsername());// 设置字段值
+        contentValues.put(PHONE, info.getPhone());
+        contentValues.put(EMAIL, info.getEmail());
+        contentValues.put(Address, info.getAddress());
+        int result = db.update(TABLE_NAME, contentValues, ID + "=" + info.getId(), null);// 更新条件
+        db.close();
+        return result;
+    }
+	
+    public Info select(int i){
+        SQLiteDatabase db = this.getReadableDatabase();
+        // 查询限制一条
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null,i-1+","+1);
+        Info info = new Info();
+        if(cursor.moveToFirst()){
+            info.setId(cursor.getInt(0));
+            info.setUsername(cursor.getString(1));
+            info.setPhone(cursor.getString(2));
+            info.setEmail(cursor.getString(3));
+            info.setAddress(cursor.getString(4));
+        }else{
+            return null;
+        }
+        // 遍历查询结果集
+        while(!cursor.isLast()){
+            cursor.moveToNext();
+            //......
+        }
+        cursor.close();
+        db.close();
+        return info;
+    }
+}
+```
+
+
+
+
+
