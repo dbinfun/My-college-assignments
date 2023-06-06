@@ -97,8 +97,8 @@
 ## 无线网络机构组织
 
 - 工业和信息化部无线电管理局（国家无线电办公室）是主管全国无线电管理工作的职能机构
-- lFCC：Federal Communications Commission：美国联邦通信委员会
-- lETSI：European Telecommunications Standards Institute:欧洲电信标准化协会
+- FCC：Federal Communications Commission：美国联邦通信委员会
+- ETSI：European Telecommunications Standards Institute:欧洲电信标准化协会
 
 国际标准化组织
 
@@ -742,6 +742,81 @@ WPA2在加密方面支持两种加密方式：AES    TKIP
 
 对于AS模式，不同用户，每次连接生成PTK的PSK(PMK)是不同的。
 
+# 名词解释
+
+- FCC：Federal Communications Commission：美国联邦通信委员会
+- ETSI：European Telecommunications Standards Institute:欧洲电信标准化协会
+
+- ITU（International Telecommunication Union-国际电信联盟）政府机构、厂商、科学组织、运营商
+- ISO（International Standard Organization-国际化标准组织）各国的标准化机构
+- IEC （International Electrical Commission-国际电工委员会）各国的标准化机构
+- IEEE（Institute of Electrical and Electronics Engineers-电气和电子工程师协会）技术团体
+- IAB（Internet Architecture Board-Internet 体系委员会）政府机构
+- 3GPP 第三代合作伙伴计划（3rd Generation Partnership Project)
+- CCSA 中国通信标准化协会
+- MU-MIMO:（多用户-多输入多输出）
+- SISO:（Single In Single Out 单输入单输出）
+- ISM: 工业-科学-医疗
+- FDMA: 频分多址
+- TDMA: 时分多址
+- CDMA: 码分多址
+- SDMA: 空分多址
+- STA: 站
+- WM: (Wireless Medium)无线介质
+- BS: (Base Station)基站
+- DS: (Distribution System)分布式系统
+- SS: (Service Set)服务集
+- SSID: 服务集标识符
+- BSSID: 
+- BSS: 基本服务集
+- BSA: (Distribution System)基本服务区
+- IBSS: 独立基本服务集
+- ESS: 扩展服务集
+- ESA: 扩展服务区
+- WDS: 无线分布式系统
+- WMN: 无线Mesh网络
+- WMM: 无线多媒体
+- DSS: 分布式系统服务
+- AP隔离: 无线网络内电脑不能互相访问
+- Short GI: 减小帧与帧之间的发送时间间隔
+- Upnp: NAT
+- WEP: 有线等效加密
+- WPA/WPA2: Wi-Fi 保护接入
+- QSS: 快速安全设置
+- RTS: 请求发送
+- CTS: 允许发送
+- 
+- CSMA/CD
+- CSMA/CA
+- CS: 载波监听
+- MA: 多址访问
+- CD: 冲突检测
+- CA: 冲突避免
+- 
+- IFS: 帧间间隙
+- Slot Time: 时隙
+- WMAN: 无线城域网
+- ASS: 自适应天线系统
+- CS: 特定服务会聚子层
+- CPS: 公共部分子层
+- SS: 安全子层
+- UE: 用户设备
+- SS: 用户站
+- CN: 核心网
+- QoS: 质量服务
+- UGS: 主动授予服务
+- RTPS: 实时查询服务
+- NRTPS: 非实时查询服务
+- BE: 尽力而为
+- ACL: 异步无连接
+- SCO: 面相同步链接
+- LMP: 蓝牙链路管理器规范
+- L2CAP: 蓝牙逻辑链路控制和自适应协议
+- SDP: 蓝牙服务发现协议
+- PAN-ID: 网络编号
+- UWB: 超宽带技术
+
 # ......
 
-内容太多，不在更新
+内容太多，不再更新
+
