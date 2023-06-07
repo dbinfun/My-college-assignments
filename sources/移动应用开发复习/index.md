@@ -1042,6 +1042,18 @@ public class MainActivity2 extends AppCompatActivity {
 
 [示例见本页数据储存](#数据储存)
 
+## SharedPreferences
+
+```java
+SharedPreferences sp = getSharedPreferences("info",MODE_PRIVATE);
+SharedPreferences.Editor editor = sp.edit();
+String t = sp.getString("t",null);// get and set
+editor.clear();// 清空
+editor.commit();// 提交任务
+```
+
+
+
 ## 服务和广播
 
 ### 编写服务
