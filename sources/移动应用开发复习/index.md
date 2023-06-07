@@ -858,7 +858,338 @@ public class DBHelper extends SQLiteOpenHelper {
 }
 ```
 
+# 代码示例
+
+## Activity(Intent,Bundle)
+
+[示例](#活动直接的数据传递🍎)
+
+## Button,EditText,TextView
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<!--线性布局-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/main.text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        />
+    <Button
+        android:id="@+id/main.clear_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="清除"/>
+    <TextView
+            android:id="@+id/main.text.view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!-- 无限套娃-->
+    </LinearLayout>
+
+</LinearLayout>
+```
+
+```java
+public class MainActivity extends AppCompatActivity {
+    // 程序将会将用户输入全部转换为字符串，然后解析为计算式。
+    String evalString = "";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        final EditText editText = findViewById(R.id.main_text);
+        editText.setFocusableInTouchMode(false); // 不可以编辑
+        editText.setKeyListener(null); //不可以粘贴
+        editText.setClickable(false);// 不可以点击
+        editText.setText("hello");// 直接修改内容
+        
+        final TextView tv = findViewById(R.id.main_text_view);
+        tv.setText("hello");// 设置内容
+        
+        // 按钮监听
+        Button button = findViewById(R.id.main_clear_text);
+        button.setOnClickListener((v)-> {
+            evalString = evalString+ finalI;
+            editText.setText(evalString);
+        });
+    }
+}
+```
+
+## 提示组件(Toast,AlertDialog)
+
+Toast
+
+```java
+Toast.makeText(this,"",Toast.LENGTH_SHORT).show();// 短时间
+Toast.makeText(this,"",Toast.LENGTH_LONG).show();// 长时间
+```
+
+[AlertDialog](#消息对话框🍎)
+
+## 适配器(ListView,SimpleAdapter)
+
+布局文件
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+
+        android:id="@+id/main2.list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    </ListView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+组件(用来放到ListView的组件)
+
+再ImageView中可以直接设置`android:src="@drawable/...."`设置其图片
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/list_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="80dp"
+            android:maxWidth="80dp"
+            android:padding="10dp"/>
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:padding="10dp"/>
+    </LinearLayout>
+</LinearLayout>
+```
+
+Java代码：
+
+```java
+public class MainActivity2 extends AppCompatActivity {
+    // 图片的信息
+    private String[] data = {
+            "Apple","Banana","Orange","Watermelon","Pear"
+    };
+    // 图片的id,是放在drawable目录下的图片,文件名是immg0.jpg,则id就是R.drawable.img0
+    private int[] header = {
+            R.drawable.img0,R.drawable.img1,R.drawable.img2,R.drawable.img3,
+            R.drawable.img4
+    };
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.activity_main2);
+        ListView listView = findViewById(R.id.main2_list);
+        // 添加元素点击的监听器
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            // 获取子元素的name,最终对应的就是前面定义的data变量的数据
+            TextView textView = view.findViewById(R.id.name);
+            Toast.makeText(this,textView.getText(),Toast.LENGTH_SHORT).show();
+            
+        });
+        // 存放数据的list
+        List<Map<String,Object>> list = new ArrayList<>();
+        for(int i=0;i<data.length;i++){
+            Map<String,Object> map = new HashMap<>();
+            map.put("header",header[i]);// 表示header映射数据到对应的id,
+            map.put("data",data[i]);// data映射为字符串
+            list.add(map);
+        }
+        // 创建一个适配器，适配器的数据是list,布局是list_array.xml
+        // 子元素中数据是header对应header,name对应data.
+        SimpleAdapter simpleAdapter = new SimpleAdapter(
+                MainActivity2.this,
+                list,
+                R.layout.list_array,
+                new String[]{"header","data"},
+                new int[]{R.id.header,R.id.name}// 此处将header映射到对应的图片的id上，将列表中ImageView的数据修改为对应的图片
+                );
+        listView.setAdapter(simpleAdapter);
+    }
+}
+```
+
+## 数据库操作
+
+[见数据储存](#数据储存🍎)
+
+## 服务和广播
+
+### 编写服务
+
+音乐播放
+
+```java
+public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+    private static final String TAG = "MusicPlayerService";
+    private MediaPlayer mediaPlayer;
+    private boolean isPrepared = false;// 好像没啥用
+    private boolean isStart = false;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mediaPlayer = MediaPlayer.create(this, R.raw.wojide);// 这里注意和自己的文件对应
+        mediaPlayer.setOnPreparedListener(this); // 注册回调函数，当准备好的时候会回调onPrepared方法
+        mediaPlayer.setOnCompletionListener(this); // 注册回调函数，当播放完成的时候会回调onCompletion方法
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) 
+            String action = intent.getAction();
+            if ("PLAY_MUSIC".equals(action)) {
+                if(mediaPlayer==null){
+                    mediaPlayer = MediaPlayer.create(this, R.raw.wojide);
+                    mediaPlayer.setOnPreparedListener(this); // 注册回调函数，当准备好的时候会回调onPrepared方法
+                    mediaPlayer.setOnCompletionListener(this); // 注册回调函数，当播放完成的时候会回调onCompletion方法
+                }
+               isStart = true;
+            }
+            // 停止播放
+            if("STOP_MUSIC".equals(action)){
+                if(mediaPlayer!=null){
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                    isPrepared = false;
+                }
+            }
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        stopSelf();
+    }
+}
+```
+
+### 注册服务
+
+```xml
+<service
+            android:name=".music.MusicPlayerService"
+            android:exported="false"/>
+```
 
 
 
+### 调用服务
+
+```java
+Intent playIntent = new Intent(this, MusicPlayerService.class);
+playIntent.putExtra("time",time);
+playIntent.setAction("PLAY_MUSIC");
+```
+
+### 注册广播
+
+``` java
+public class MyServiceStart extends AppCompatActivity {
+    protected void onCreate(Bundle savedInstanceState){
+		localBroadcastManager = LocalBroadcastManager.getInstance(this); // 获取实例
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(BROADCAST_ACTION);// BROADCAST_ACTION就是一个字符串
+        localReceiver = new LocalReceiver();
+        localBroadcastManager.registerReceiver(localReceiver, intentFilter);
+    }
+    // 一个内部内，用来处理广播
+    class LocalReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 处理
+        }
+    }
+}
+```
+
+### 发送广播
+
+``` java
+Intent intent = new Intent(MyServiceStart.BROADCAST_ACTION);//BROADCAST_ACTION 是一个字符串
+localBroadcastManager.sendBroadcast(intent);
+```
+
+## AndroidMainfest注册
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+	<!--这个是获取网络权限-->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Application1"
+        tools:targetApi="31">
+        <!--这个是注册服务-->
+        <service
+            android:name=".music.MusicPlayerService"
+            android:exported="false"/>
+        <!--普通的活动-->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <!--下面这个是启动类(活动)-->
+        <activity
+            android:name=".StartActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+```
 
