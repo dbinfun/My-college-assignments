@@ -461,7 +461,7 @@ xmlCopy code<GridLayout
 
 # 多界面
 
-## 活动直接的数据传递🍎
+## 活动之间的数据传递🍎
 
 `MainActivity`-->`MainActivity2`-->`MainActivity`的数据传递
 
@@ -862,7 +862,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 ## Activity(Intent,Bundle)
 
-[示例](#活动直接的数据传递🍎)
+[示例见本页活动之间的数据传递](#活动之间的数据传递🍎)
 
 ## Button,EditText,TextView
 
@@ -935,7 +935,7 @@ Toast.makeText(this,"",Toast.LENGTH_SHORT).show();// 短时间
 Toast.makeText(this,"",Toast.LENGTH_LONG).show();// 长时间
 ```
 
-[AlertDialog](#消息对话框🍎)
+[示例见本页消息对话框](#消息对话框🍎)
 
 ## 适配器(ListView,SimpleAdapter)
 
@@ -1037,7 +1037,7 @@ public class MainActivity2 extends AppCompatActivity {
 
 ## 数据库操作
 
-[见数据储存](#数据储存🍎)
+[示例见本页数据储存](#数据储存🍎)
 
 ## 服务和广播
 
