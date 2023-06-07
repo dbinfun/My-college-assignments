@@ -835,6 +835,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public Info select(int i){
         SQLiteDatabase db = this.getReadableDatabase();
         // 查询限制一条
+        // query参数(表名,columns,selection,selectionArgs,groupBy,having,orderBy,limite)
+        // 如 query("t_user","class","name=?,age>=?",new String[]{"dbin",0},"class","sex='男'","10,100");
+        // select class from t_user where name='dbin',age>=0 group by class having sex='男' limit 10,100;
         Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null,i-1+","+1);
         Info info = new Info();
         if(cursor.moveToFirst()){
