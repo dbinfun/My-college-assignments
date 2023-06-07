@@ -1125,6 +1125,8 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 Intent playIntent = new Intent(this, MusicPlayerService.class);
 playIntent.putExtra("time",time);
 playIntent.setAction("PLAY_MUSIC");
+startService(playIntent);
+stopService(playIntent);
 ```
 
 ### 注册广播
