@@ -318,6 +318,114 @@ nload -m
 
 在ubuntu22.04出现`Wayland workaround`错误，可以参考官网解决问题https://symless.com/synergy-help/synergy-on-ubuntu-21-04
 
+## Clash
+
+### INSTALL
+
+clash是一个很有用的代理工具，这里介绍简单的安装(不做透明代理，需要自己设置代理)。
+
+到[GitHub releases](https://github.com/Dreamacro/clash/releases/) 下载对应的版本，我的是amd64,所以下载的[这个版本](https://github.com/Dreamacro/clash/releases/download/v1.16.0/clash-linux-amd64-v1.16.0.gz)
+
+下载后解压并重命名放到`/usr/bin`目录下,并授权运行
+
+```sh
+gzip -d clash-linux-amd64-v1.16.0.gz # 解压
+sudo mv clash-linux-amd64-v1.16.0.gz /usr/bin/clash #移动
+sudo chown dbinfun:dbinfun /usr/bin/clash #修改用户到dbinfun,根据自己的情况修改用户
+sudo chmod 755 /usr/bin/clash # 修改权限
+```
+
+此时运行`clash -v`就可以看到clash版本了
+
+在当前用户的目录下创建`.config/clash`目录并运行放入配置文件`config.yaml`(配置文件需要自己从其他途径获得,或者自己编写)运行命令
+
+```sh
+clash -f /home/dbinfun/.config/clash/config.yaml
+```
+
+clash会在目录下创建`Country.mmdb`文件,如果无法下载也可以去[这里](https://gitee.com/mirrors/Pingtunnel/blob/master/GeoLite2-Country.mmdb)下载并重命名
+
+之后clash就已经开始运行了,可以通过转发流量到7890端口让clash代理请求
+
+### Service Start
+
+使用服务启动clash
+
+创建`clash.service`文件
+
+```sh
+vim /etc/systemd/system/clash.service
+```
+
+写入以下内容
+
+```properties
+[Unit]
+Description=clash
+
+[Service]
+Type=simple
+User=dbinfun
+ExecStart=/usr/bin/clash -d /home/dbinfun/.config/clash/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+注意`User` 和 `ExecStart`对应的路径名
+
+运行下面三条命令(可能需要root权限)
+
+```shell
+systemctl daemon-reload # 重加载systemd
+systemctl enable clash # 开启自启
+systemctl start clash # 运行服务
+```
+
+查看状态重启和日志等使用以下命令
+
+```shell
+systemctl status clash # 查看状态
+journalctl -u clash.service -f # 查看日志
+systemctl restart clash.service # 重启
+systemctl stop clash.service # 停止
+```
+
+也有docker的安装方案在官方[Wiki](https://dreamacro.github.io/clash/introduction/service.html#docker)
+
+### GUI Manage
+
+我们需要一个图形管理页面,我用的是[yacd](https://github.com/haishanh/yacd)
+
+可以直接到release页面下载解压然后使用nginx等运行网页，也可以使用docker，docker更方便
+
+```sh
+sudo docker run -d -p 80:80 --name clashmanage haishanh/yacd
+```
+
+访问80端口填写地址和密码(地址和密码在配置文件`config.yaml`的 `external-controller` 和`secret`中设置)就可以看到管理页面了。
+
+附上一个修改修改配置文件密码的py脚本,有时候有点用
+
+```python
+import yaml
+
+import ruamel.yaml
+
+# 打开并读取YAML文件
+with open('config.yaml', 'r') as file:
+    yaml_data = ruamel.yaml.round_trip_load(file)
+
+# 修改YAML文件中的键值
+yaml_data['external-controller'] = '0.0.0.0:9090'
+yaml_data['secret'] = '123456'
+
+# 保存修改后的YAML文件
+with open('config.yaml', 'w') as file:
+    ruamel.yaml.round_trip_dump(yaml_data, file)
+```
+
 # 开发工具安装
 
 ## Navicat
