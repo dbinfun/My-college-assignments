@@ -17,9 +17,10 @@ It was a repository for recording certain assignments from my university. Maybe 
 1. [个人经验总结](./myexperience/index.md)
 2. [移动应用开发复习](./sources/移动应用开发复习/index.md)
 3. [无线网络复习](./sources/无线网络技术复习/index.md)
-4. [归档](./archive/index.md)
-5. [我校量化评教脚本](./archive/archive/自动评教脚本.md)
-6. [我校课程中心进入关闭课程脚本](./archive/archive/courseCenterEnterCourse.md)
+4. [网络协议分析](./sources/网络协议分析复习/网络协议分析复习.md)
+5. [归档](./archive/index.md)
+6. [我校量化评教脚本](./archive/archive/自动评教脚本.md)
+7. [我校课程中心进入关闭课程脚本](./archive/archive/courseCenterEnterCourse.md)
 
 # 温馨提示
 
