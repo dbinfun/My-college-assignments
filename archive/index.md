@@ -5,4 +5,6 @@
 - [云计算与虚拟化实验](./archive/云计算与虚拟化实验/index.md) 
 - [移动应用开发实验](./archive/移动应用开发实验/index.md)
 - [路由与交换命令总结](./archive/路由与交换/命令总结.md)
+- [移动应用开发复习](./archive/移动应用开发复习/index.md)
+- [无线网络复习](./archive/无线网络技术复习/index.md)
 
