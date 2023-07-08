@@ -44,6 +44,51 @@ tar -zxvf ****.tar -C /***/***
 
 这种格式的文件可以直接运行,(如navicat),同样也可能会在家目录下生成一些配置文件。
 
+### apt|apt-get|aptitude
+
+这三个也是用来安装卸载常用的命令
+
+apt 命令：
+
+1. `apt update`：更新可用软件包的列表，以获取最新的软件包信息。
+2. `apt upgrade`：升级已安装的软件包到最新可用版本。
+3. `apt install <软件包>`：安装指定的软件包及其相关依赖。
+4. `apt remove <软件包>`：从系统中移除指定的软件包，但保留其配置文件。
+5. `apt purge <软件包>`：彻底从系统中移除指定的软件包，包括其配置文件。
+6. `apt autoremove`：自动移除不再需要的依赖关系和孤立的软件包。
+7. `apt search <关键词>`：搜索软件包，使用关键词匹配包名和描述。
+8. `apt show <软件包>`：显示特定软件包的详细信息，包括描述、版本、依赖关系等。
+
+apt-get 命令：
+
+1. `apt-get update`：更新可用软件包的列表，以获取最新的软件包信息。
+2. `apt-get upgrade`：升级已安装的软件包到最新可用版本。
+3. `apt-get install <软件包>`：安装指定的软件包及其相关依赖。
+4. `apt-get remove <软件包>`：从系统中移除指定的软件包，但保留其配置文件。
+5. `apt-get purge <软件包>`：彻底从系统中移除指定的软件包，包括其配置文件。
+6. `apt-get autoremove`：自动移除不再需要的依赖关系和孤立的软件包。
+7. `apt-get search <关键词>`：搜索软件包，使用关键词匹配包名和描述。
+8. `apt-get show <软件包>`：显示特定软件包的详细信息，包括描述、版本、依赖关系等。
+
+aptitude命令:
+
+1. `aptitude search <关键词>`：搜索软件包，使用关键词匹配包名和描述。
+2. `aptitude show <软件包>`：显示特定软件包的详细信息，包括描述、版本、依赖关系等。
+3. `aptitude install <软件包>`：安装指定的软件包及其相关依赖。
+4. `aptitude remove <软件包>`：从系统中移除指定的软件包，但保留其配置文件。
+5. `aptitude purge <软件包>`：彻底从系统中移除指定的软件包，包括其配置文件。
+6. `aptitude update`：更新可用软件包的列表，以获取最新的软件包信息。
+7. `aptitude upgrade`：升级已安装的软件包到最新可用版本。
+8. `aptitude full-upgrade`：执行完全升级，包括升级已安装的软件包及其依赖关系。
+9. `aptitude safe-upgrade`：执行安全升级，仅升级不会引入破坏性变化的软件包。
+10. `aptitude hold <软件包>`：将指定的软件包标记为 "hold"，阻止其被自动升级。
+11. `aptitude unhold <软件包>`：取消对软件包的 "hold" 标记。
+12. `aptitude search '~i'`：列出已经安装的所有软件包。
+13. `aptitude search '~U'`：列出可用升级的软件包。
+14. `aptitude search '~Upattern'`：列出符合指定模式的可升级软件包。
+
+
+
 ## 图标的创建
 
 在Ubuntu中使用`deb`文件安装应用，一般可以在应用程序中找到图标,但是想要在桌面创建图标却不能直接拖动。Ubuntu桌面应用图标的格式是`.desktop`,下面是Ubuntu的桌面图标的源文件的主要类容（通过添加扩展可以快速将菜单图标添加到桌面）
@@ -569,7 +614,18 @@ sudo usermod -aG wireshark dbinfun
    sudo snap refresh snap-store
    ```
 
-   
+
+### Ubuntu卡死
+
+有些情况下Ubuntu会卡死，导致只有鼠标能动
+
+使用`ctrl+alt+f6`进入tty，然后登录运行
+
+```txt
+sudo pkill Xorg
+```
+
+等一会就重新进入了
 
 ## 安装
 
