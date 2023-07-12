@@ -1,24 +1,31 @@
 # My-college-assignments
 
+大学生活结束了,这个仓库将被关闭
+
 It was a repository for recording certain assignments from my university. Maybe it helped some friends.
 
 这是一个记录我的大学学习的仓库,如果你觉得对你有所帮助,请点个star! Thanks.
 
-本仓库已同步到[私人git仓库](https://git.dbinfun.net/dbinfun/My-college-assignments)
-
 本仓库GitHub地址:[My-college-assignments](https://github.com/dbinfun/My-college-assignments)
 
-本仓库私人Gitea仓库地址:[My-college-assignments](https://git.dbinfun.net/dbinfun/My-college-assignments) (+8时区夜间访问慢)
-
-如果你和我在同一所学校，且正在使用校园网可以访问[My-college-assignments](http://10.62.0.218:3000/dbinfun/My-college-assignments) (可能会失效)
+本仓库私人Gitea仓库地址:[My-college-assignments](https://git.dbinfun.net/dbinfun/My-college-assignments) (未来可能失效)
 
 # 仓库目录
 
 1. [个人经验总结](./myexperience/index.md)
-4. [网络协议分析](./sources/网络协议分析复习/网络协议分析复习.md)
-5. [归档](./archive/index.md)
-6. [我校量化评教脚本](./archive/archive/自动评教脚本.md)
-7. [我校课程中心进入关闭课程脚本](./archive/archive/courseCenterEnterCourse.md)
+2. [网络协议分析](./sources/网络协议分析复习/网络协议分析复习.md)
+3. [我校量化评教脚本](./archive/archive/自动评教脚本.md)
+4. [我校课程中心进入关闭课程脚本](./archive/archive/courseCenterEnterCourse.md)
+5. [J2EE课程大作业.zip](./archive/archive/java-web.zip)
+6. [网络编程复习](./archive/archive/网络编程/网络编程复习.md) and [网络编程实验](./archive/archive/网络编程/index.md)
+7. [Docker与KVM的基本使用-云计算与虚拟化作业 ](./archive/archive/Docker与KVM的基本使用/Docker与KVM的基本使用.md)
+8. [Docker统一编排集群化-工程实践4](./archive/archive/Docker统一编排集群化/Docker统一编排集群化.md) 
+9. [云计算与虚拟化实验](./archive/archive/云计算与虚拟化实验/index.md) 
+10. [移动应用开发实验](./archive/archive/移动应用开发实验/index.md)
+11. [路由与交换命令总结](./archive/archive/路由与交换/命令总结.md)
+12. [移动应用开发复习](./archive/archive/移动应用开发复习/index.md)
+13. [无线网络复习](./archive/archive/无线网络技术复习/index.md)
+14. [归档](./archive/index.md)
 
 # 温馨提示
 
